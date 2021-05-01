@@ -1,5 +1,6 @@
 package com.ElectionController.Controllers;
 
+import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Constants.ResponseCodes;
 import com.ElectionController.DatabaseConnector.Getter.H2Getter;
 import com.ElectionController.DatabaseConnector.Putter.H2Putter;
@@ -9,6 +10,7 @@ import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.InvalidParameterException;
 import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Helpers.ElectionControllerHelper;
+import com.ElectionController.Logger.ConsoleLogger;
 import com.ElectionController.Structures.*;
 import com.ElectionController.Structures.APIParams.ChangeElectionQuery;
 import com.ElectionController.Structures.APIParams.NewElectionQuery;
@@ -98,8 +100,9 @@ public class ElectionController {
         try {
             voter = h2Getter.getVoter(changeElectionQuery.getVoterId());
         } catch (InvalidCredentialException ex) {
-            Log("[INVALID LOGGER]: " +
-                    "[ChangeElectionQuery] => USER_DOES_NOT_EXISTS VoterId: " + changeElectionQuery.getVoterId());
+//            Log("[INVALID LOGGER]: " +
+//                    "[ChangeElectionQuery] => USER_DOES_NOT_EXISTS VoterId: " + changeElectionQuery.getVoterId());
+            ConsoleLogger.Log(ControllerOperations.CHANGE_ELECTION, "USER_DOES_NOT_EXISTS", changeElectionQuery);
             throw new InvalidCredentialException("Invalid Username/Password");
         }
 

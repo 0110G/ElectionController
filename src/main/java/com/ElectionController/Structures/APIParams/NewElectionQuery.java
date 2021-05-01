@@ -2,6 +2,7 @@ package com.ElectionController.Structures.APIParams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class NewElectionQuery {
 
@@ -74,6 +75,17 @@ public class NewElectionQuery {
             newElectionQuery.registeredVoters = this.registeredVoters;
             return newElectionQuery;
         }
+
     }
 
+    @Override
+    public String toString() {
+        return "NewElectionQuery{" +
+                "voterId='" + voterId + '\'' +
+                ", voterPassword='" + voterPassword + '\'' +
+                ", electionTitle='" + electionTitle + '\'' +
+                ", electionDescription='" + electionDescription + '\'' +
+                ", registeredVoters=" + registeredVoters +
+                '}';
+    }
 }

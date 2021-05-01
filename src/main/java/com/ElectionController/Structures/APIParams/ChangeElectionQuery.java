@@ -69,4 +69,15 @@ public class ChangeElectionQuery {
             return changeElectionQuery;
         }
     }
+
+    @Override
+    public String toString() {
+        return "ChangeElectionQuery{" +
+                "voterId='" + voterId + '\'' +
+                ", voterPassword='" + voterPassword + '\'' +
+                ", electionTitle='" + electionTitle + '\'' +
+                ", electionDescription='" + electionDescription + '\'' +
+                ", electionId='" + electionId + '\'' +
+                '}';
+    }
 }
