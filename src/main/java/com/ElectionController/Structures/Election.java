@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Election {
-    String electionTitle;
-    String electionId;
-    String electionDescription;
-    String adminVoterId;
-    List<VoterMap> registeredVoters = new ArrayList<VoterMap>();
-    List<Post> availablePost = new ArrayList<Post>();
+    private String electionTitle;
+    private String electionId;
+    private String electionDescription;
+    private String adminVoterId;
+
+    private List<Voter> eligibleVoters = new ArrayList<>();
+
+    /*Not required. Changing design a bit*/
+    private List<VoterMap> registeredVoters = new ArrayList<VoterMap>();
+
+    private List<Post> availablePost = new ArrayList<Post>();
 
     public String getElectionTitle() {
         return this.electionTitle;
@@ -35,6 +40,14 @@ public class Election {
         this.electionDescription = electionDescription;
     }
 
+    public List<Voter> getEligibleVoters() {
+        return this.eligibleVoters;
+    }
+
+    public void setEligibleVoters(List<Voter> eligibleVoters) {
+        this.eligibleVoters = eligibleVoters;
+    }
+
     public String getAdminVoterId() {
         return this.adminVoterId;
     }
@@ -43,9 +56,12 @@ public class Election {
         this.adminVoterId = adminVoterId;
     }
 
-
     public List<VoterMap> getRegisteredVoters() {
         return this.registeredVoters;
+    }
+
+    public void setRegisteredVoters(List<VoterMap> registeredVoters) {
+        this.registeredVoters = registeredVoters;
     }
 
     public List<Post> getAvailablePost() {

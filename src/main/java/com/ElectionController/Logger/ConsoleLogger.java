@@ -17,7 +17,11 @@ public class ConsoleLogger {
                 "[" + controllerOperation.getBaseController() + "::" + controllerOperation.getController() + "] " +
                 message + " [Params]: ");
         for (Object param : params) {
-            logMessage.append(param.toString());
+            if (param == null) {
+                logMessage.append("<null>");
+            } else {
+                logMessage.append(param.toString());
+            }
         }
         System.out.println(logMessage.toString());
     }

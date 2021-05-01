@@ -1,6 +1,6 @@
 package com.ElectionController.Exceptions;
 
-public class EntityNotFoundException extends Throwable {
+public class EntityNotFoundException extends RuntimeException {
     private String errorMessage;
     private int errorCode;
 

@@ -1,7 +1,5 @@
 package com.ElectionController.Structures;
 
-import org.springframework.data.annotation.Id;
-
 import java.util.ArrayList;
 import java.util.List;
 
