@@ -1,24 +1,19 @@
 package com.ElectionController.Controllers;
 
-import com.ElectionController.Constants.ControllerOperations;
-import com.ElectionController.Constants.ResponseCodes;
 import com.ElectionController.DatabaseConnector.Getter.H2Getter;
 import com.ElectionController.DatabaseConnector.Putter.H2Putter;
 import com.ElectionController.DatabaseConnector.Updater.H2Updater;
 import com.ElectionController.Exceptions.EntityNotFoundException;
-import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.InvalidParameterException;
-import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Helpers.ElectionControllerHelper;
-import com.ElectionController.Logger.ConsoleLogger;
-import com.ElectionController.Structures.*;
-import com.ElectionController.Structures.APIParams.ChangeElectionQuery;
+import com.ElectionController.Structures.Election;
+import com.ElectionController.Structures.Voter;
+import com.ElectionController.Structures.Response;
 import com.ElectionController.Structures.APIParams.NewElectionQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -46,14 +41,6 @@ public class ElectionController {
         throw new EntityNotFoundException("Election does not exists");
     }
 
-
-    @GetMapping("/error")
-    public Response message(){
-        return new Response.Builder()
-                .withResponse("abaeawda")
-                .build();
-    }
-    
     @GetMapping("/Query")
     public Response GetQuery() {
         return new Response.Builder()

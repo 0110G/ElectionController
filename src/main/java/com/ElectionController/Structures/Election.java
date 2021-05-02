@@ -8,12 +8,7 @@ public class Election {
     private String electionId;
     private String electionDescription;
     private String adminVoterId;
-
     private List<Voter> eligibleVoters = new ArrayList<>();
-
-    /*Not required. Changing design a bit*/
-    private List<VoterMap> registeredVoters = new ArrayList<VoterMap>();
-
     private List<Post> availablePost = new ArrayList<Post>();
 
     public String getElectionTitle() {
@@ -56,16 +51,31 @@ public class Election {
         this.adminVoterId = adminVoterId;
     }
 
-    public List<VoterMap> getRegisteredVoters() {
-        return this.registeredVoters;
+    public void setAvailablePost(List<Post> availablePost) {
+        this.availablePost = availablePost;
     }
 
-    public void setRegisteredVoters(List<VoterMap> registeredVoters) {
-        this.registeredVoters = registeredVoters;
-    }
+    //    public List<VoterMap> getRegisteredVoters() {
+//        return this.registeredVoters;
+//    }
+
+//    public void setRegisteredVoters(List<VoterMap> registeredVoters) {
+//        this.registeredVoters = registeredVoters;
+//    }
 
     public List<Post> getAvailablePost() {
         return this.availablePost;
     }
 
+    @Override
+    public String toString() {
+        return "Election{" +
+                "electionTitle='" + electionTitle + '\'' +
+                ", electionId='" + electionId + '\'' +
+                ", electionDescription='" + electionDescription + '\'' +
+                ", adminVoterId='" + adminVoterId + '\'' +
+                ", eligibleVoters=" + eligibleVoters +
+                ", availablePost=" + availablePost +
+                '}';
+    }
 }

@@ -6,18 +6,23 @@ import com.ElectionController.DatabaseConnector.Getter.H2Getter;
 import com.ElectionController.DatabaseConnector.Putter.H2Putter;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.InvalidParameterException;
+import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Helpers.ElectionControllerHelper;
 import com.ElectionController.Logger.ConsoleLogger;
-import com.ElectionController.Structures.APIParams.NewElectionQuery;
 import com.ElectionController.Structures.Election;
-import com.ElectionController.Structures.Response;
 import com.ElectionController.Structures.Voter;
+import com.ElectionController.Structures.Response;
 import com.ElectionController.Structures.VoterMap;
+import com.ElectionController.Structures.Post;
+import com.ElectionController.Structures.PostMap;
+import com.ElectionController.Structures.APIParams.NewElectionQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +53,7 @@ public class NewElectionOperation {
         ValidateNotNull(newElectionQuery);
 
         // Voter tries authenticates himself
-        Voter voter;
+        Voter voter = null;
         try {
             voter = h2Getter.getVoter(newElectionQuery.getVoterId());
         } catch (InvalidCredentialException ex) {
@@ -84,8 +89,47 @@ public class NewElectionOperation {
                 election.getElectionId(),
                 newElectionQuery.getVoterId());
 
+        // Added Feature for post map
+        int currentPostIndex = 0;
+        List<Post> registeredPosts = new ArrayList<>();
+        for (NewElectionQuery.Post post : newElectionQuery.getRegisteredPost()) {
+            if (!postWorthRegistering(post)) {
+                continue;
+            }
+            Post newPost = new Post();
+            newPost.setPostId(election.getElectionId() + Integer.toString(currentPostIndex));
+            newPost.setPostDescription(post.getPostDescription());
+            newPost.setElectionId(election.getElectionId());
+            try {
+                h2Putter.registerPostForElection(newPost);
+            } catch (RestrictedActionException ex) {
+                ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "ERROR_CREATING_POST", post);
+                throw new RestrictedActionException("Unable to create post");
+            }
+            currentPostIndex++;
+            for(String contestantId : post.getRegisteredContestants()) {
+                Voter contestant = null;
+                try {
+                    contestant = h2Getter.getVoter(contestantId);
+                } catch (InvalidCredentialException ex) {
+                    ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "Invalid contestant",
+                            "Contestantid:", contestantId);
+                    throw new InvalidCredentialException("Invalid contestant id");
+                }
+                PostMap postMap = new PostMap();
+                postMap.setPostId(newPost.getPostId());
+                postMap.setContestantAlias(contestant.getVoterName());
+                postMap.setContestantId(contestant.getVoterId());
+                h2Putter.registerCandidatesForPost(postMap);
+                contestant.setVoterPassword("************");
+                contestant.setElectionList(null);
+                newPost.getContestants().add(contestant);
+            }
+            registeredPosts.add(newPost);
+        }
+        election.setAvailablePost(registeredPosts);
         currentId++;
-        // Returning responsw
+
         return new Response.Builder()
                 .withResponse(election)
                 .withStatus(ResponseCodes.SUCCESS.getResponse())
@@ -119,5 +163,11 @@ public class NewElectionOperation {
             return list;
         }
         return list.stream().distinct().collect(Collectors.toList());
+    }
+
+    private boolean postWorthRegistering(final NewElectionQuery.Post post) {
+        return post != null &&
+                post.getRegisteredContestants() != null &&
+                !post.getRegisteredContestants().isEmpty();
     }
 }

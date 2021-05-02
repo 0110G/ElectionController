@@ -1,15 +1,16 @@
 package com.ElectionController.DatabaseConnector.Getter;
 
 import com.ElectionController.Exceptions.InvalidCredentialException;
+import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Structures.Election;
 import com.ElectionController.Structures.Voter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,6 +28,7 @@ public class H2Getter implements Query{
     private final static String GET_VOTER_QUERY =
             "SELECT * FROM VOTERS WHERE voterId = ?";
 
+    @Override
     public Election getElection (final String electionId) {
         Election election = null;
         try {
@@ -37,9 +39,12 @@ public class H2Getter implements Query{
             return election;
         } catch (EmptyResultDataAccessException ex) {
             throw new InvalidCredentialException("Given Election Does not Exists");
+        } catch (DataAccessException ex) {
+            throw new RestrictedActionException("Some Internal error occured");
         }
     }
 
+    @Override
     public Voter getVoter (final String voterId) {
         Voter voter = null;
         try {
@@ -50,6 +55,8 @@ public class H2Getter implements Query{
             return voter;
         } catch (EmptyResultDataAccessException ex) {
             throw new InvalidCredentialException("Given Voter Does not Exists");
+        } catch (DataAccessException ex) {
+            throw new RestrictedActionException("Some Internal error occured");
         }
     }
 

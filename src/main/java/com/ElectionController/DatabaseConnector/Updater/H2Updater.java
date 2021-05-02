@@ -1,6 +1,5 @@
 package com.ElectionController.DatabaseConnector.Updater;
 
-import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Structures.Election;
 import org.springframework.beans.factory.annotation.Autowired;

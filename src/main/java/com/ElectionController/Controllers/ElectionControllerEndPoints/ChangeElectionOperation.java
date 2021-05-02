@@ -3,7 +3,6 @@ package com.ElectionController.Controllers.ElectionControllerEndPoints;
 import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Constants.ResponseCodes;
 import com.ElectionController.DatabaseConnector.Getter.H2Getter;
-import com.ElectionController.DatabaseConnector.Putter.H2Putter;
 import com.ElectionController.DatabaseConnector.Updater.H2Updater;
 import com.ElectionController.Exceptions.EntityNotFoundException;
 import com.ElectionController.Exceptions.InvalidCredentialException;

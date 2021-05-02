@@ -37,4 +37,14 @@ public class VoterMap {
     public void setVoterAdmin(boolean voterAdmin) {
         isVoterAdmin = voterAdmin;
     }
+
+    @Override
+    public String toString() {
+        return "VoterMap{" +
+                "voterId='" + voterId + '\'' +
+                ", electionId='" + electionId + '\'' +
+                ", isVoterEligible=" + isVoterEligible +
+                ", isVoterAdmin=" + isVoterAdmin +
+                '}';
+    }
 }
