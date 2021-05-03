@@ -1,7 +1,9 @@
 package com.ElectionController.DatabaseConnector.Getter;
 
+import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.RestrictedActionException;
+import com.ElectionController.Logger.ConsoleLogger;
 import com.ElectionController.Structures.Election;
 import com.ElectionController.Structures.Voter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +40,13 @@ public class H2Getter implements Query{
                     electionId);
             return election;
         } catch (EmptyResultDataAccessException ex) {
-            throw new InvalidCredentialException("Given Election Does not Exists");
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
+                    "ElectionId: ", electionId);
+            throw new InvalidCredentialException("ELECTION_DOES_NOT_EXISTS");
         } catch (DataAccessException ex) {
-            throw new RestrictedActionException("Some Internal error occured");
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
+                    "ElectionId:", electionId);
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }
 
@@ -54,9 +60,13 @@ public class H2Getter implements Query{
                     voterId);
             return voter;
         } catch (EmptyResultDataAccessException ex) {
-            throw new InvalidCredentialException("Given Voter Does not Exists");
+            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
+                    "VoterId: ", voterId);
+            throw new InvalidCredentialException("VOTER_DOES_NOT_EXISTS");
         } catch (DataAccessException ex) {
-            throw new RestrictedActionException("Some Internal error occured");
+            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
+                    "VoterId: ", voterId);
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }
 

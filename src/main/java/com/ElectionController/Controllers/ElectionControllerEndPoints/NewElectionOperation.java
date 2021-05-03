@@ -2,10 +2,7 @@ package com.ElectionController.Controllers.ElectionControllerEndPoints;
 
 import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Constants.ResponseCodes;
-import com.ElectionController.DatabaseConnector.Getter.H2Getter;
-import com.ElectionController.DatabaseConnector.Putter.H2Putter;
 import com.ElectionController.Exceptions.InvalidCredentialException;
-import com.ElectionController.Exceptions.InvalidParameterException;
 import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Helpers.ElectionControllerHelper;
 import com.ElectionController.Logger.ConsoleLogger;
@@ -24,16 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-public class NewElectionOperation {
-
-    @Autowired
-    private H2Getter h2Getter;
-
-    @Autowired
-    private H2Putter h2Putter;
+public class NewElectionOperation extends ElectionController {
 
     @Autowired
     private ElectionControllerHelper electionControllerHelper;
@@ -52,22 +42,13 @@ public class NewElectionOperation {
         // Body contains Valid Parameters
         ValidateNotNull(newElectionQuery);
 
-        // Voter tries authenticates himself
-        Voter voter = null;
+        // Voter tries to authenticate himself
         try {
-            voter = h2Getter.getVoter(newElectionQuery.getVoterId());
+            Voter voter = getAuthenticatedVoter(newElectionQuery.getVoterId(), newElectionQuery.getVoterPassword(),
+                    ControllerOperations.NEW_ELECTION);
         } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "USER_DOES_NOT_EXISTS",
-                    "VoterID: ", newElectionQuery.getVoterId());
-            throw new InvalidCredentialException("Invalid Username/Password");
-        }
-
-        // Verifying Password
-        if (voter == null ||
-                voter.getVoterPassword() == null ||
-                !voter.getVoterPassword().equals(newElectionQuery.getVoterPassword())) {
-            ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "USER_DOES_NOT_EXISTS",
-                    "VoterID: ", newElectionQuery.getVoterId());
+            ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, ex.getErrorMessage(),
+                    newElectionQuery);
             throw new InvalidCredentialException("Invalid Username/Password");
         }
 
@@ -100,14 +81,9 @@ public class NewElectionOperation {
             newPost.setPostId(election.getElectionId() + Integer.toString(currentPostIndex));
             newPost.setPostDescription(post.getPostDescription());
             newPost.setElectionId(election.getElectionId());
-            try {
-                h2Putter.registerPostForElection(newPost);
-            } catch (RestrictedActionException ex) {
-                ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "ERROR_CREATING_POST", post);
-                throw new RestrictedActionException("Unable to create post");
-            }
             currentPostIndex++;
-            for(String contestantId : post.getRegisteredContestants()) {
+            List<String> distinctRegisteredContestants = getUniqueEntities(post.getRegisteredContestants());
+            for(String contestantId : distinctRegisteredContestants) {
                 Voter contestant = null;
                 try {
                     contestant = h2Getter.getVoter(contestantId);
@@ -125,6 +101,14 @@ public class NewElectionOperation {
                 contestant.setElectionList(null);
                 newPost.getContestants().add(contestant);
             }
+            // After newPost is completely build, then only register this new post
+            // to db.
+            try {
+                h2Putter.registerPostForElection(newPost);
+            } catch (RestrictedActionException ex) {
+                ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "ERROR_CREATING_POST", post);
+                throw new RestrictedActionException("Unable to create post");
+            }
             registeredPosts.add(newPost);
         }
         election.setAvailablePost(registeredPosts);
@@ -139,8 +123,10 @@ public class NewElectionOperation {
 
     private Election mapNewElectionQueryToElection(final NewElectionQuery newElectionQuery, final String electionId) {
         final Election regElection = new Election();
-        regElection.setElectionTitle(newElectionQuery.getElectionTitle());
-        regElection.setElectionDescription(newElectionQuery.getElectionDescription());
+        regElection.setElectionTitle((String)
+                getValueOrDefault(newElectionQuery.getElectionTitle(), "New Election"));
+        regElection.setElectionDescription((String)
+                getValueOrDefault(newElectionQuery.getElectionDescription(), "Election Description"));
         regElection.setAdminVoterId(newElectionQuery.getVoterId());
         regElection.setElectionId(electionId);
         for (String voterId : newElectionQuery.getRegisteredVoters()) {
@@ -150,19 +136,6 @@ public class NewElectionOperation {
             regElection.getEligibleVoters().add(voter);
         }
         return regElection;
-    }
-
-    private static void ValidateNotNull(final Object obj) {
-        if (obj == null) {
-            throw new InvalidParameterException("Invalid Parameter");
-        }
-    }
-
-    private List<String> getUniqueEntities(final List<String> list) {
-        if (list == null) {
-            return list;
-        }
-        return list.stream().distinct().collect(Collectors.toList());
     }
 
     private boolean postWorthRegistering(final NewElectionQuery.Post post) {

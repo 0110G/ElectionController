@@ -3,9 +3,9 @@ package com.ElectionController.Structures.APIParams;
 public class ChangeElectionQuery {
     private String voterId;
     private String voterPassword;
+    private String electionId;
     private String electionTitle;
     private String electionDescription;
-    private String electionId;
 
     public String getVoterId() {
         return voterId;

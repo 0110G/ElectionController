@@ -1,6 +1,8 @@
 package com.ElectionController.DatabaseConnector.Updater;
 
+import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Exceptions.RestrictedActionException;
+import com.ElectionController.Logger.ConsoleLogger;
 import com.ElectionController.Structures.Election;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +31,7 @@ public class H2Updater implements Query {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Election updateElection(String electionId, Election election) {
+    public Election updateElection(final String electionId, final Election election) {
         try {
             jdbcTemplate.update(
                     UPDATE_ELECTION_QUERY,
@@ -39,11 +41,14 @@ public class H2Updater implements Query {
             );
             return election;
         } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
+                    "ElectionId:", electionId,
+                    "Election: ", election);
             throw new RestrictedActionException("Some Internal error occured");
         }
     }
 
-    public Election updateElection(String electionId, String voterId, Election election) {
+    public Election updateElection(final String electionId, final String voterId, final Election election) {
         try {
             jdbcTemplate.update(
                     UPDATE_ELECTION_QUERY_SECURE,
@@ -54,6 +59,10 @@ public class H2Updater implements Query {
             );
             return election;
         } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
+                   "ElectionId:", electionId,
+                    "VoterId:", voterId,
+                    "Election: ", election);
             throw new RestrictedActionException("Invalid Admin Entered");
         }
     }
