@@ -26,7 +26,7 @@ public class Post {
             return this.code;
         }
 
-        static WinCriteria getWinCriteria(final int code) {
+        public static WinCriteria getWinCriteria(final int code) {
             switch (code) {
                 case 0:
                     return GREATEST_NUMBER_OF_VOTES;

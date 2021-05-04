@@ -5,7 +5,10 @@ import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Logger.ConsoleLogger;
 import com.ElectionController.Structures.Election;
+import com.ElectionController.Structures.Post;
 import com.ElectionController.Structures.Voter;
+import com.ElectionController.Structures.VoterMap;
+import com.sun.rowset.internal.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
@@ -15,6 +18,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -29,6 +33,18 @@ public class H2Getter implements Query{
 
     private final static String GET_VOTER_QUERY =
             "SELECT * FROM VOTERS WHERE voterId = ?";
+
+    private final static String GET_VOTER_MAP_QUERY =
+            "SELECT * FROM VOTERMAP WHERE voterId = ? AND electionId = ?";
+
+    private final static String GET_REGISTERED_VOTERS_FOR_ELECTION =
+            "SELECT * FROM VOTERMAP AS vm, VOTERS AS v WHERE electionId = ? AND vm.voterId = v.voterId";
+
+    private final static String GET_REGISTERED_POSTS_FOR_ELECTION =
+            "SELECT * FROM POST WHERE electionId = ?";
+
+    private final static String GET_POST_CANDIDATES =
+            "SELECT * FROM POSTMAP AS pm, VOTERS AS v WHERE postId = ? AND pm.contestantId = v.voterId";
 
     @Override
     public Election getElection (final String electionId) {
@@ -70,12 +86,79 @@ public class H2Getter implements Query{
         }
     }
 
-    public List<Voter> authenticateVoter1(final String enteredVoterId, final String enteredPassword) {
-        String query = "SELECT voterId, voterName, voterPassword FROM VOTERS";
-        return jdbcTemplate.query(
-                query,
-                new VoterMapper()
-        );
+    @Override
+    public VoterMap getVoterMap(final String voterId, final String electionId) {
+        VoterMap voterMap = null;
+        try {
+            voterMap = jdbcTemplate.queryForObject(
+                    GET_VOTER_MAP_QUERY,
+                    new VoterMapMapper(),
+                    voterId,
+                    electionId
+            );
+            return voterMap;
+        } catch (EmptyResultDataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
+                    "VoterId: ", voterId,
+                    "ElectionId:", electionId);
+            throw new InvalidCredentialException("VOTERMAP_ENTRY_DOES_NOT_EXIST");
+        } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
+                    "VoterId: ", voterId,
+                    "ElectionId:", electionId);
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+        }
+    }
+
+    @Override
+    public List<Voter> getElectionVoters(final String electionId) {
+        List<Voter> registeredVoters = new ArrayList<>();
+        try {
+            registeredVoters = jdbcTemplate.query(
+                    GET_REGISTERED_VOTERS_FOR_ELECTION,
+                    new VoterMapper(),
+                    electionId
+            );
+            return registeredVoters;
+        } catch (DataAccessException ignored) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_VOTERS, ignored.getMessage(),
+                    "ElectionId:", electionId);
+            return registeredVoters;
+        }
+    }
+
+    @Override
+    public List<Post> getElectionPosts(final String electionId) {
+        List<Post> registeredPosts = null;
+        try {
+            registeredPosts = jdbcTemplate.query(
+                    GET_REGISTERED_POSTS_FOR_ELECTION,
+                    new PostMapper(),
+                    electionId
+            );
+            return registeredPosts;
+        } catch (DataAccessException ignored) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POSTS, ignored.getMessage(),
+                    "ElectionId:", electionId);
+            return new ArrayList<Post>();
+        }
+    }
+
+    @Override
+    public List<Voter> getPostCandidates(final String postId) {
+        List<Voter> registeredCandidates = null;
+        try {
+            registeredCandidates = jdbcTemplate.query(
+                    GET_POST_CANDIDATES,
+                    new VoterMapper(),
+                    postId
+            );
+            return registeredCandidates;
+        } catch (DataAccessException ignored) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POSTS, ignored.getMessage(),
+                    "PostId:", postId);
+            return new ArrayList<Voter>();
+        }
     }
 
     private static final class VoterMapper implements RowMapper<Voter> {
@@ -96,6 +179,39 @@ public class H2Getter implements Query{
             el.setElectionDescription(rs.getString("electionDescription"));
             el.setAdminVoterId(rs.getString("adminVoterId"));
             return el;
+        }
+    }
+
+    private static final class VoterMapMapper implements RowMapper<VoterMap> {
+        public VoterMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VoterMap voterMap = new VoterMap();
+            voterMap.setVoterId(rs.getString("voterId"));
+            voterMap.setElectionId(rs.getString("electionId"));
+            voterMap.setVoterAdmin(rs.getBoolean("isVoterAdmin"));
+            voterMap.setVoterEligible(rs.getBoolean("isVoterEligible"));
+            return voterMap;
+        }
+    }
+
+    private static final class PostMapper implements RowMapper<Post> {
+        public Post mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Post post = new Post();
+            post.setPostId(rs.getString("postId"));
+            post.setPostDescription(rs.getString("postDescription"));
+            post.setElectionId(rs.getString("electionId"));
+            post.setWinCriteria(Post.WinCriteria.getWinCriteria(rs.getInt("winCriteria")));
+            return post;
+        }
+    }
+
+    private static final class StringIdMapper implements RowMapper<String> {
+        private String field = "voterId";
+        StringIdMapper(String field) {
+            this.field = field;
+        }
+        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+            String voterId = rs.getString(field);
+            return voterId;
         }
     }
 }

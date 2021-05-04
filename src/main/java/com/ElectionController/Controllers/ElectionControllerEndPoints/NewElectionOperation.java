@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Console;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
 @RestController
 public class NewElectionOperation extends ElectionController {
@@ -129,7 +131,9 @@ public class NewElectionOperation extends ElectionController {
                 getValueOrDefault(newElectionQuery.getElectionDescription(), "Election Description"));
         regElection.setAdminVoterId(newElectionQuery.getVoterId());
         regElection.setElectionId(electionId);
-        for (String voterId : newElectionQuery.getRegisteredVoters()) {
+        TreeSet<String> treeSet = new TreeSet<>(newElectionQuery.getRegisteredVoters());
+        treeSet.add(newElectionQuery.getVoterId());
+        for (String voterId : treeSet) {
             Voter voter = h2Getter.getVoter(voterId);
             voter.setVoterPassword("************");
             voter.setElectionList(null);
