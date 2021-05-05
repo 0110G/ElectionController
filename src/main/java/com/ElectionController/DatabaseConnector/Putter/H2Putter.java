@@ -3,15 +3,14 @@ package com.ElectionController.DatabaseConnector.Putter;
 import com.ElectionController.Constants.ControllerOperations;
 import com.ElectionController.Exceptions.RestrictedActionException;
 import com.ElectionController.Logger.ConsoleLogger;
-import com.ElectionController.Structures.Election;
-import com.ElectionController.Structures.Post;
-import com.ElectionController.Structures.PostMap;
-import com.ElectionController.Structures.VoterMap;
+import com.ElectionController.Structures.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import javax.xml.crypto.Data;
 import java.sql.Types;
 
 @Configuration
@@ -54,6 +53,13 @@ public class H2Putter implements Query {
              "contestantAlias, " +
              "votesSecured) " +
              "VALUES (?, ?, ?, ?)";
+
+    private static final String REGISTER_VOTER_QUERY =
+            "INSERT INTO VOTERS (" +
+            "voterId, " +
+            "voterName, " +
+            "voterPassword) " +
+            "VALUES (?, ?, ?)";
 
     @Override
     public Election registerElection(final Election election) {
@@ -131,4 +137,21 @@ public class H2Putter implements Query {
         }
     }
 
+    @Override
+    public Voter registerVoter(final Voter voter) {
+        try {
+            jdbcTemplate.update(REGISTER_VOTER_QUERY,
+                    new Object[]{
+                            voter.getVoterId(),
+                            voter.getVoterName(),
+                            voter.getVoterPassword()
+                    },
+                    new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}
+            );
+            return voter;
+        } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTER, ex.getMessage(), voter);
+            throw new RestrictedActionException("Error while creating new voter");
+        }
+    }
 }

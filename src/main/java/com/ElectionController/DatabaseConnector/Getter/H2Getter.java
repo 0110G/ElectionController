@@ -8,7 +8,6 @@ import com.ElectionController.Structures.Election;
 import com.ElectionController.Structures.Post;
 import com.ElectionController.Structures.Voter;
 import com.ElectionController.Structures.VoterMap;
-import com.sun.rowset.internal.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
@@ -37,13 +36,13 @@ public class H2Getter implements Query{
     private final static String GET_VOTER_MAP_QUERY =
             "SELECT * FROM VOTERMAP WHERE voterId = ? AND electionId = ?";
 
-    private final static String GET_REGISTERED_VOTERS_FOR_ELECTION =
+    private final static String GET_REGISTERED_VOTERS_FOR_ELECTION_QUERY =
             "SELECT * FROM VOTERMAP AS vm, VOTERS AS v WHERE electionId = ? AND vm.voterId = v.voterId";
 
-    private final static String GET_REGISTERED_POSTS_FOR_ELECTION =
+    private final static String GET_REGISTERED_POSTS_FOR_ELECTION_QUERY =
             "SELECT * FROM POST WHERE electionId = ?";
 
-    private final static String GET_POST_CANDIDATES =
+    private final static String GET_POST_CANDIDATES_QUERY =
             "SELECT * FROM POSTMAP AS pm, VOTERS AS v WHERE postId = ? AND pm.contestantId = v.voterId";
 
     @Override
@@ -115,7 +114,7 @@ public class H2Getter implements Query{
         List<Voter> registeredVoters = new ArrayList<>();
         try {
             registeredVoters = jdbcTemplate.query(
-                    GET_REGISTERED_VOTERS_FOR_ELECTION,
+                    GET_REGISTERED_VOTERS_FOR_ELECTION_QUERY,
                     new VoterMapper(),
                     electionId
             );
@@ -132,7 +131,7 @@ public class H2Getter implements Query{
         List<Post> registeredPosts = null;
         try {
             registeredPosts = jdbcTemplate.query(
-                    GET_REGISTERED_POSTS_FOR_ELECTION,
+                    GET_REGISTERED_POSTS_FOR_ELECTION_QUERY,
                     new PostMapper(),
                     electionId
             );
@@ -149,7 +148,7 @@ public class H2Getter implements Query{
         List<Voter> registeredCandidates = null;
         try {
             registeredCandidates = jdbcTemplate.query(
-                    GET_POST_CANDIDATES,
+                    GET_POST_CANDIDATES_QUERY,
                     new VoterMapper(),
                     postId
             );

@@ -1,28 +1,15 @@
 package com.ElectionController.Controllers.ElectionControllerEndPoints;
 
 import com.ElectionController.Constants.ControllerOperations;
-import com.ElectionController.DatabaseConnector.Getter.H2Getter;
-import com.ElectionController.DatabaseConnector.Putter.H2Putter;
-import com.ElectionController.DatabaseConnector.Updater.H2Updater;
+import com.ElectionController.Controllers.ActionController;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Exceptions.InvalidParameterException;
 import com.ElectionController.Structures.Voter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: Remove this class eventually
-public class ElectionController {
-
-    @Autowired
-    protected H2Getter h2Getter;
-
-    @Autowired
-    protected H2Putter h2Putter;
-
-    @Autowired
-    protected H2Updater h2Updater;
+public class ElectionController extends ActionController {
 
     protected Voter getAuthenticatedVoter(final String voterId,
                                           final String voterPassword,
