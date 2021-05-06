@@ -4,11 +4,16 @@ import com.ElectionController.DatabaseConnector.Deleter.H2Deleter;
 import com.ElectionController.DatabaseConnector.Getter.H2Getter;
 import com.ElectionController.DatabaseConnector.Putter.H2Putter;
 import com.ElectionController.Exceptions.InvalidCredentialException;
+import com.ElectionController.Structures.Post;
+import com.ElectionController.Structures.Voter;
 import com.ElectionController.Structures.VoterMap;
+import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class ElectionControllerHelper {
@@ -53,10 +58,18 @@ public class ElectionControllerHelper {
 
     public void deleteVotersFromElection(final List<String> votersToDelete,
                                          final String electionId,
-                                         final String electionAdmin) {
+                                         final String electionAdmin,
+                                         boolean strictDelete) {
+        List<Post>registeredPost = h2Getter.getElectionPosts(electionId);
         for (String voterId : votersToDelete) {
             if (electionAdmin.equals(voterId)) {continue;}
+            List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
+            if (reg.isEmpty()) {continue;}
+            if (!strictDelete) {continue;}
             h2Deleter.deleteVoterFromElection(voterId, electionId);
+            for (String postId : reg) {
+                h2Deleter.deleteCandidateFromPost(postId, voterId);
+            }
         }
     }
 
@@ -67,5 +80,19 @@ public class ElectionControllerHelper {
         } catch (InvalidCredentialException ex) {
             return false;
         }
+    }
+
+    List<String> getPostsForWhichVoterIsCandidate(final List<Post> posts, final String voterId) {
+        List<String> postIds = new ArrayList<>();
+        for (Post post : posts) {
+            if (post.getContestants()
+                    .stream()
+                    .map(Voter::getVoterId)
+                    .collect(Collectors.toList())
+                    .contains(voterId)){
+                postIds.add(post.getPostId());
+            }
+        }
+        return postIds;
     }
 }

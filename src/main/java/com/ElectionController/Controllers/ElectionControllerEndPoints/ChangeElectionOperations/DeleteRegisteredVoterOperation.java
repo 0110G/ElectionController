@@ -65,7 +65,8 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
 
         electionControllerHelper.deleteVotersFromElection(deleteRegisteredVoterFromElectionQuery.getVotersToDelete(),
                 deleteRegisteredVoterFromElectionQuery.getElectionId(),
-                deleteRegisteredVoterFromElectionQuery.getVoterId());
+                deleteRegisteredVoterFromElectionQuery.getVoterId(),
+                deleteRegisteredVoterFromElectionQuery.getForceDelete());
 
         return null;
     }

@@ -53,6 +53,8 @@ public class H2Getter implements Query{
                     GET_ELECTION_QUERY,
                     new ElectionMapper(),
                     electionId);
+            election.setEligibleVoters(getElectionVoters(electionId));
+            election.setAvailablePost(getElectionPosts(electionId));
             return election;
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
@@ -164,11 +166,21 @@ public class H2Getter implements Query{
     }
 
     private static final class VoterMapper implements RowMapper<Voter> {
+        private boolean maskPassword;
+
+        VoterMapper() {this.maskPassword = false;}
+
+        VoterMapper(final boolean maskPassword) {this.maskPassword = maskPassword;}
+
         public Voter mapRow(ResultSet rs, int rowNum) throws SQLException {
             Voter vp = new Voter();
             vp.setVoterId(rs.getString("voterId"));
+            if (this.maskPassword) {
+                vp.setVoterPassword("******************");
+            } else {
+                vp.setVoterPassword(rs.getString("voterPassword"));
+            }
             vp.setVoterName(rs.getString("voterName"));
-            vp.setVoterPassword(rs.getString("voterPassword"));
             return vp;
         }
     }

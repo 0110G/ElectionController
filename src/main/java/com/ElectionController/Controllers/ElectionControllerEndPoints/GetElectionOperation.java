@@ -52,18 +52,17 @@ public class GetElectionOperation extends ElectionController {
             throw new InvalidCredentialException("Cannot find election");
         }
 
-        List<Voter> registeredVoters = maskVoterPassword(h2Getter.getElectionVoters(getElectionQuery.getElectionId()));
+        List<Voter> registeredVoters = maskVoterPassword(election.getEligibleVoters());
         election.setEligibleVoters(registeredVoters);
         List<Post> registeredPosts = h2Getter.getElectionPosts(getElectionQuery.getElectionId());
-
-//        int index = 0;
-//        for (Post post : registeredPosts) {
-//            List<Voter> registeredCandidatesForPost = maskVoterPassword(post.getContestants());
-//            registeredPosts.get(index).setContestants(registeredCandidatesForPost);
-//            index++;
-//        }
-
+        int index = 0;
+        for (Post post : registeredPosts) {
+            List<Voter> registeredCandidatesForPost = maskVoterPassword(post.getContestants());
+            registeredPosts.get(index).setContestants(registeredCandidatesForPost);
+            index++;
+        }
         election.setAvailablePost(registeredPosts);
+
         return new Response.Builder()
                 .withResponse(election)
                 .withStatusCode(ResponseCodes.SUCCESS.getResponseCode())

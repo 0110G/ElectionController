@@ -29,7 +29,8 @@ public enum ControllerOperations {
 
     DB_UPDATE_ELECTION("DatabaseConnector", "UpdateElection"),
 
-    DB_DELETE_VOTER_FROM_ELECTION("DatabaseConnector", "DeleteVoterFromElection");
+    DB_DELETE_VOTER_FROM_ELECTION("DatabaseConnector", "DeleteVoterFromElection"),
+    DB_DELETE_CANDIDATE_FROM_POST("DatabaseConnector", "DeleteCandidateFromPost");
 
     private final String baseController;
     private final String controller;

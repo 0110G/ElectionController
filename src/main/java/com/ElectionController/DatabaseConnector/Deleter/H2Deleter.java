@@ -17,6 +17,9 @@ public class H2Deleter implements Query {
     private final static String DELETE_VOTER_FROM_ELECTION_QUERY =
             "DELETE FROM VOTERMAP WHERE voterId = ? AND electionId = ?";
 
+    private final static String DELETE_CANDIDATE_FROM_POST_QUERY =
+            "DELETE FROM POSTMAP WHERE postId = ? AND contestantId = ?";
+
     @Override
     public void deleteVoterFromElection(final String voterId, final String electionId) {
         try {
@@ -29,6 +32,19 @@ public class H2Deleter implements Query {
                     ex.getMessage(),
                     "VoterId:", voterId,
                     "ElectionId", electionId);
+            throw new RestrictedActionException("Cannot delete entry");
+        }
+    }
+
+    public void deleteCandidateFromPost(final String postId, final String candidateId) {
+        try {
+            jdbcTemplate.update(
+                    DELETE_CANDIDATE_FROM_POST_QUERY,
+                    postId, candidateId
+            );
+        } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_DELETE_CANDIDATE_FROM_POST,
+                    ex.getMessage(), "PostId:", postId, "VoterID:", candidateId);
             throw new RestrictedActionException("Cannot delete entry");
         }
     }
