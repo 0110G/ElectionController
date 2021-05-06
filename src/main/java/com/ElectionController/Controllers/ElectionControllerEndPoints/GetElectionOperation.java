@@ -56,12 +56,12 @@ public class GetElectionOperation extends ElectionController {
         election.setEligibleVoters(registeredVoters);
         List<Post> registeredPosts = h2Getter.getElectionPosts(getElectionQuery.getElectionId());
 
-        int index = 0;
-        for (Post post : registeredPosts) {
-            List<Voter> registeredCandidatesForPost = maskVoterPassword(h2Getter.getPostCandidates(post.getPostId()));
-            registeredPosts.get(index).setContestants(registeredCandidatesForPost);
-            index++;
-        }
+//        int index = 0;
+//        for (Post post : registeredPosts) {
+//            List<Voter> registeredCandidatesForPost = maskVoterPassword(post.getContestants());
+//            registeredPosts.get(index).setContestants(registeredCandidatesForPost);
+//            index++;
+//        }
 
         election.setAvailablePost(registeredPosts);
         return new Response.Builder()

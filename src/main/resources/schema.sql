@@ -43,15 +43,3 @@ CREATE TABLE POSTMAP (
     contestantAlias VARCHAR(250) DEFAULT 'Candidate Name',
     votesSecured INTEGER DEFAULT 0
 )
-
---CreateElection Called ->
---1. Voter Authentication
---    IF FAILS, RETURN FAIL RESPONCE
---2. Query consists of post to be created and respective candidates
---3. Traverse through post, for each post, Add an entry to POST table
---    Traverse through each candidate and add the entry to POSTCANDIDATEMAPPER
---    A Candidate contest for multiple posts
---4. Return respose
---
---Vote: Params VoterCredentials, Election, PostId, toVoterId
---1.

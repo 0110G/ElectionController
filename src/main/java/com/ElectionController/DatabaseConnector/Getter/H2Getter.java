@@ -135,6 +135,9 @@ public class H2Getter implements Query{
                     new PostMapper(),
                     electionId
             );
+            for (Post post : registeredPosts) {
+                post.setContestants(getPostCandidates(post.getPostId()));
+            }
             return registeredPosts;
         } catch (DataAccessException ignored) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POSTS, ignored.getMessage(),
