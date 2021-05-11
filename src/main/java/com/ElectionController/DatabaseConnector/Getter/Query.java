@@ -15,4 +15,5 @@ public interface Query {
     public List<Voter> getElectionVoters(final String electionId);
     public List<Post> getElectionPosts(final String electionId);
     public List<Voter> getPostCandidates(final String postId);
+    public Post getElectionPost(final String electionId, final String postId);
 }

@@ -1,6 +1,7 @@
 package com.ElectionController.Controllers.ElectionControllerEndPoints.ChangeElectionOperations;
 
 import com.ElectionController.Constants.ControllerOperations;
+import com.ElectionController.Constants.ResponseCodes;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Helpers.ElectionControllerHelper;
 import com.ElectionController.Logger.ConsoleLogger;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
-
-
     /*
     *  1. Only admin can delete some participant
     *  2. For a given voter, following cases present
@@ -30,7 +29,6 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
     *                   If the exists a given voter, remove it
     *
     * */
-
     @Autowired
     private ElectionControllerHelper electionControllerHelper;
 
@@ -68,7 +66,11 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
                 deleteRegisteredVoterFromElectionQuery.getVoterId(),
                 deleteRegisteredVoterFromElectionQuery.getForceDelete());
 
-        return null;
+        return new Response.Builder()
+                .withStatus(ResponseCodes.SUCCESS.getResponse())
+                .withStatusCode(ResponseCodes.SUCCESS.getResponseCode())
+                .withResponse(null)
+                .build();
     }
 
 

@@ -11,21 +11,6 @@ import java.util.stream.Collectors;
 
 public class ElectionController extends ActionController {
 
-    protected Voter getAuthenticatedVoter(final String voterId,
-                                          final String voterPassword,
-                                          final ControllerOperations controllerOperation) {
-        Voter voter = h2Getter.getVoter(voterId);
-        if (voter != null) {
-            if (voter.getVoterPassword() == null ||
-                !voter.getVoterPassword().equals(voterPassword)) {
-                throw new InvalidCredentialException("INVALID_PASSWORD");
-            }
-            return voter;
-        } else {
-            throw new InvalidCredentialException("VOTER_ID_INVALID");
-        }
-    }
-
     protected static void ValidateNotNull(final Object obj) {
         if (obj == null) {
             throw new InvalidParameterException("Invalid Parameter");

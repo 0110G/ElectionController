@@ -27,11 +27,23 @@ public class H2Updater implements Query {
             "WHERE electionId = ? " +
             "AND adminVoterId = ?";
 
+    private static final String UPDATE_CANDIDATE_ADD_VOTE_QUERY =
+            "UPDATE POSTMAP SET " +
+            "votesSecured = votesSecured + 1" +
+            "WHERE postId = ? " +
+            "AND contestantId = ?";
+
+    private static final String UPDATE_MARK_VOTING_DONE_QUERY =
+            "UPDATE VOTERMAP SET " +
+            "isVoterEligible = FALSE," +
+            "WHERE voterId = ? " +
+            "AND electionId = ?";
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Election updateElection(final String electionId, final Election election) {
+    public void updateElection(final String electionId, final Election election) {
         try {
             jdbcTemplate.update(
                     UPDATE_ELECTION_QUERY,
@@ -39,16 +51,15 @@ public class H2Updater implements Query {
                     election.getElectionDescription(),
                     election.getElectionId()
             );
-            return election;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId,
                     "Election: ", election);
-            throw new RestrictedActionException("Some Internal error occured");
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }
 
-    public Election updateElection(final String electionId, final String voterId, final Election election) {
+    public void updateElection(final String electionId, final String voterId, final Election election) {
         try {
             jdbcTemplate.update(
                     UPDATE_ELECTION_QUERY_SECURE,
@@ -57,13 +68,40 @@ public class H2Updater implements Query {
                     election.getElectionId(),
                     election.getAdminVoterId()
             );
-            return election;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
                    "ElectionId:", electionId,
                     "VoterId:", voterId,
                     "Election: ", election);
             throw new RestrictedActionException("Invalid Admin Entered");
+        }
+    }
+
+    @Override
+    public void incrementCandidateVote(final String postId, final String contestantId) {
+        try {
+            jdbcTemplate.update(
+                    UPDATE_CANDIDATE_ADD_VOTE_QUERY,
+                    postId,
+                    contestantId
+            );
+        } catch (DataAccessException ex) {
+            // TODO: Add logger
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+        }
+    }
+
+    @Override
+    public void markVoterCompleted(final String voterId, final String electionId) {
+        try {
+            jdbcTemplate.update(
+                    UPDATE_MARK_VOTING_DONE_QUERY,
+                    voterId,
+                    electionId
+            );
+        } catch (DataAccessException ex) {
+            // TODO: Add logger
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }
 }

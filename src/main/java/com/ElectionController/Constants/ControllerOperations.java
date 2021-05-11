@@ -15,6 +15,8 @@ public enum ControllerOperations {
 
     GET_ELECTION ("ElectionController", "GetElection"),
 
+    VOTER_VOTE("VoterController", "VoterVote"),
+
     DB_PUT_ELECTION ("DatabaseConnector", "PutElection"),
     DB_PUT_VOTERMAP("DatabaseConnector", "PutVotermap"),
     DB_PUT_POST("DababaseConnector", "PutPost"),
@@ -25,6 +27,9 @@ public enum ControllerOperations {
     DB_GET_VOTERMAP("DatabaseConnector", "GetVotermap"),
     DB_GET_ELECTION_VOTERS("DatabaseConnector", "GetElectionVoters"),
     DB_GET_ELECTION_POSTS("DatabaseConnector", "GetElectionPosts"),
+    DB_GET_ELECTION_POST("DatabaseConnector", "GetElectionPost"),
+    DB_GET_POST_CANDIDATES("DatabaseConnector", "GetPostCandidates"),
+    DB_GET_POST_CANDIDATE("DatabaseConnector", "GetPostCandidate"),
     DB_GET_VOTER("DatabaseConnector", "GetVoter"),
 
     DB_UPDATE_ELECTION("DatabaseConnector", "UpdateElection"),

@@ -42,8 +42,15 @@ public class H2Getter implements Query{
     private final static String GET_REGISTERED_POSTS_FOR_ELECTION_QUERY =
             "SELECT * FROM POST WHERE electionId = ?";
 
+    private final static String GET_REGISTERED_POST_FOR_ELECTION_QUERY =
+            "SELECT * FROM POST WHERE electionId = ? AND postId = ?";
+
     private final static String GET_POST_CANDIDATES_QUERY =
-            "SELECT * FROM POSTMAP AS pm, VOTERS AS v WHERE postId = ? AND pm.contestantId = v.voterId";
+            "SELECT * FROM POSTMAP AS pm, VOTERS AS v WHERE pm.postId = ? AND pm.contestantId = v.voterId";
+
+    private final static String GET_POST_CANDIDATE_QUERY =
+            "SELECT * FROM POSTMAP AS pm, VOTERS AS v WHERE pm.postId = ? AND pm.contestantId = ? " +
+                    "AND pm.contestantId = v.voterId";
 
     @Override
     public Election getElection (final String electionId) {
@@ -68,7 +75,7 @@ public class H2Getter implements Query{
     }
 
     @Override
-    public Voter getVoter (final String voterId) {
+    public Voter getVoter(final String voterId) {
         Voter voter = null;
         try {
             voter = jdbcTemplate.queryForObject(
@@ -149,6 +156,31 @@ public class H2Getter implements Query{
     }
 
     @Override
+    public Post getElectionPost(final String electionId, final String postId) {
+        Post post = null;
+        try {
+            post = jdbcTemplate.queryForObject(
+                    GET_REGISTERED_POST_FOR_ELECTION_QUERY,
+                    new PostMapper(),
+                    electionId,
+                    postId
+            );
+            if (post != null) {
+                post.setContestants(getPostCandidates(postId));
+            }
+            return post;
+        } catch (EmptyResultDataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
+                    ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
+            throw new InvalidCredentialException("NOT_FOUND_POST_FOR_GIVEN_ELECTION");
+        } catch (DataAccessException ex) {
+            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
+                    ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+        }
+    }
+
+    @Override
     public List<Voter> getPostCandidates(final String postId) {
         List<Voter> registeredCandidates = null;
         try {
@@ -159,19 +191,37 @@ public class H2Getter implements Query{
             );
             return registeredCandidates;
         } catch (DataAccessException ignored) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POSTS, ignored.getMessage(),
+            ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATES, ignored.getMessage(),
                     "PostId:", postId);
             return new ArrayList<Voter>();
         }
     }
 
+    public Voter getPostCandidate(final String postId, final String contestantId) {
+       Voter candidate = null;
+       try {
+           candidate = jdbcTemplate.queryForObject(
+                   GET_POST_CANDIDATE_QUERY,
+                   new VoterMapper(),
+                   postId,
+                   contestantId
+           );
+           return candidate;
+       } catch (EmptyResultDataAccessException ex) {
+           ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
+                   "PostId:", postId, "ContestantId:", contestantId);
+           throw new InvalidCredentialException("CANDIDATE_NOT_REGISTERED_FOR_POSTS");
+       } catch (DataAccessException ex) {
+           ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
+                   "PostId:", postId, "ContestantId:", contestantId);
+           throw new RestrictedActionException("INTERNAL_ERROR");
+       }
+    }
+
     private static final class VoterMapper implements RowMapper<Voter> {
         private boolean maskPassword;
-
         VoterMapper() {this.maskPassword = false;}
-
         VoterMapper(final boolean maskPassword) {this.maskPassword = maskPassword;}
-
         public Voter mapRow(ResultSet rs, int rowNum) throws SQLException {
             Voter vp = new Voter();
             vp.setVoterId(rs.getString("voterId"));

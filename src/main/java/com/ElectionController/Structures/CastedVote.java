@@ -1,12 +1,11 @@
 package com.ElectionController.Structures;
 
-import org.springframework.lang.NonNull;
-
 public class CastedVote {
-    @NonNull private String voterId;
-    @NonNull private String electionId;
-    @NonNull private String postId;
-    @NonNull private String toVoterId;
+    private String voterId;
+    private String electionId;
+    private String postId;
+    private String toVoterId;
+
 
     public String getVoterId() {
         return this.voterId;

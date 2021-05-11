@@ -56,19 +56,24 @@ public class ElectionControllerHelper {
         }
     }
 
-    public void deleteVotersFromElection(final List<String> votersToDelete,
-                                         final String electionId,
-                                         final String electionAdmin,
-                                         boolean strictDelete) {
+     public void deleteVotersFromElection(final List<String> votersToDelete,
+                                          final String electionId,
+                                          final String electionAdmin,
+                                          boolean strictDelete) {
         List<Post>registeredPost = h2Getter.getElectionPosts(electionId);
         for (String voterId : votersToDelete) {
             if (electionAdmin.equals(voterId)) {continue;}
-            List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
-            if (reg.isEmpty()) {continue;}
-            if (!strictDelete) {continue;}
-            h2Deleter.deleteVoterFromElection(voterId, electionId);
-            for (String postId : reg) {
-                h2Deleter.deleteCandidateFromPost(postId, voterId);
+            if (strictDelete) {
+                h2Deleter.deleteVoterFromElection(voterId, electionId);
+                List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
+                for (String postId : reg) {
+                    h2Deleter.deleteCandidateFromPost(postId, voterId);
+                }
+            } else {
+                List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
+                if (reg.isEmpty()) {
+                    h2Deleter.deleteVoterFromElection(voterId, electionId);
+                }
             }
         }
     }

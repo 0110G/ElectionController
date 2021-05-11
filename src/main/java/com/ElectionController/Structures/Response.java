@@ -20,7 +20,7 @@ public class Response {
         this.statusCode = statusCode;
     }
 
-    public Object getResponce() {
+    public Object getResponse() {
         return this.response;
     }
 
@@ -43,6 +43,8 @@ public class Response {
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
+
+    public static Builder Builder() {return new Builder();}
 
     public static class Builder {
         private Object response = null;

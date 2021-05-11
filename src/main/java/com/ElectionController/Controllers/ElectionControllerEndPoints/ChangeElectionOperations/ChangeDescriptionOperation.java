@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ChangeDescriptionOperation extends ChangeElectionOperation {
 
-    @PostMapping("ChangeElection/ChangeDescription")
+    @PostMapping("/ChangeElection/ChangeDescription")
     public Response ChangeElectionDescription(@RequestBody ChangeElectionDescriptionQuery changeDescriptionQuery) {
         ValidateNotNull(changeDescriptionQuery);
 
