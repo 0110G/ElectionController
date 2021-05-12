@@ -13,7 +13,7 @@ CREATE TABLE VOTERMAP (
     electionId VARCHAR(250) NOT NULL,
     isVoterEligible BIT DEFAULT true,
     isVoterAdmin BIT default false,
-    votedPosts VARCHAR(15) DEFAULT '00000'
+    votedPosts VARCHAR(15) DEFAULT '0000000000'
 );
 
 DROP TABLE IF EXISTS ELECTION;

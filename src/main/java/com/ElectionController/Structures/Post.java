@@ -7,6 +7,7 @@ import java.util.List;
 public class Post {
     private String postId;      // Autogenerate
     private String electionId;  // Felt neccessary, might delete later
+    private int postIndex;
     private String postDescription;
     private List<Voter> contestants = new ArrayList<Voter>();
     private WinCriteria winCriteria = WinCriteria.GREATEST_NUMBER_OF_VOTES;
@@ -89,6 +90,14 @@ public class Post {
     public int getTotalContestants() {
         if (this.contestants == null) {return 0;}
         return this.contestants.size();
+    }
+
+    public void setPostIndex(int postIndex) {
+        this.postIndex = postIndex;
+    }
+
+    public int getPostIndex() {
+        return this.postIndex;
     }
 
     @Override

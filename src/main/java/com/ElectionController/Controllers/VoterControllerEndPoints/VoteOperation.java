@@ -39,8 +39,17 @@ public class VoteOperation extends ActionController {
             throw new InvalidCredentialException("Invalid Candidate");
         }
 
+        String voted = dbGetter.getVoterMap(voteQuery.getVoterId(), voteQuery.getElectionId()).getHasVoted();
+
+        if(!checkIfVoterEligibleToVoteForGivenPostFromVotedString(voted, voteQuery.getPostId())) {
+            ConsoleLogger.Log(ControllerOperations.VOTER_VOTE, "ALREADY_VOTED", voted);
+            throw new InvalidCredentialException("ALREADY_VOTED_FOR_POST");
+        }
+
         // Add entry to POSTMAP
         dbUpdater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
+        dbUpdater.markVoterVotedForPost(voteQuery.getVoterId(), voteQuery.getElectionId(),
+                getVotedString(voted, getPostIndexFromPostId(voteQuery.getPostId())));
 
         return Response.Builder()
                 .withResponse(null)
@@ -68,8 +77,29 @@ public class VoteOperation extends ActionController {
         }
     }
 
-    private boolean checkIfVoterHasVoted(final String voterId, final String electionId) {
-        return dbGetter.getVoterMap(voterId, electionId).getVoterEligible();
+    private boolean checkIfVoterEligibleToVoteForGivenPostFromVotedString(final String votedPosts,
+                                                       final String postId) {
+        int postIndex = getPostIndexFromPostId(postId);
+        if (postIndex >= votedPosts.length()) {return false;}
+        return votedPosts.charAt(postIndex) == '0';
     }
+
+    private String getVotedString(final String originalVotedString, final int postVotedFor) {
+        if (postVotedFor < 0 || postVotedFor >= originalVotedString.length()) {
+            throw new InvalidCredentialException("CANNOT_GENERATE_VOTED_STRING");
+        }
+        StringBuilder newVotedBuilder = new StringBuilder(originalVotedString);
+        newVotedBuilder.setCharAt(postVotedFor, '1');
+        return newVotedBuilder.toString();
+    }
+
+    private int getPostIndexFromPostId(final String postId) {
+        String[] tokens = postId.split("-");
+        if (tokens.length < 2) {
+            throw new InvalidCredentialException("CANNOT_PARSE_POST_ID");
+        }
+        return Integer.parseInt(tokens[1]);
+    }
+
 
 }

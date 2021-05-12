@@ -33,6 +33,8 @@ public enum ControllerOperations {
     DB_GET_VOTER("DatabaseConnector", "GetVoter"),
 
     DB_UPDATE_ELECTION("DatabaseConnector", "UpdateElection"),
+    DB_UPDATE_INCREMENT_CANDIDATE_VOTE("DatabaseConnector", "IncrementVote"),
+    DB_UPDATE_MARK_VOTER_VOTED_FOR_POST("DatabaseConnector", "MarkVoted"),
 
     DB_DELETE_VOTER_FROM_ELECTION("DatabaseConnector", "DeleteVoterFromElection"),
     DB_DELETE_CANDIDATE_FROM_POST("DatabaseConnector", "DeleteCandidateFromPost");

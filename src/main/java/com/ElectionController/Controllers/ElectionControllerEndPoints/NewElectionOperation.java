@@ -82,7 +82,7 @@ public class NewElectionOperation extends ElectionController {
                 continue;
             }
             Post newPost = new Post();
-            newPost.setPostId(election.getElectionId() + Integer.toString(currentPostIndex));
+            newPost.setPostId("P" + election.getElectionId() + "-" + Integer.toString(currentPostIndex));
             newPost.setPostDescription(post.getPostDescription());
             newPost.setElectionId(election.getElectionId());
             currentPostIndex++;

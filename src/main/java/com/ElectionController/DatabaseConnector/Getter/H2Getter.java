@@ -253,6 +253,7 @@ public class H2Getter implements DBGetter {
             voterMap.setElectionId(rs.getString("electionId"));
             voterMap.setVoterAdmin(rs.getBoolean("isVoterAdmin"));
             voterMap.setVoterEligible(rs.getBoolean("isVoterEligible"));
+            voterMap.setHasVoted(rs.getString("votedPosts"));
             return voterMap;
         }
     }

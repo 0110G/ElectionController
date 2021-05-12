@@ -35,7 +35,7 @@ public class H2Updater implements DBUpdater {
 
     private static final String UPDATE_MARK_VOTING_DONE_QUERY =
             "UPDATE VOTERMAP SET " +
-            "isVoterEligible = FALSE," +
+            "votedPosts = ?" +
             "WHERE voterId = ? " +
             "AND electionId = ?";
 
@@ -86,21 +86,26 @@ public class H2Updater implements DBUpdater {
                     contestantId
             );
         } catch (DataAccessException ex) {
-            // TODO: Add logger
+            ConsoleLogger.Log(ControllerOperations.DB_UPDATE_INCREMENT_CANDIDATE_VOTE,
+                    ex.getMessage(), "PostId:", postId, "ContestantId:", contestantId);
             throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }
 
     @Override
-    public void markVoterCompleted(final String voterId, final String electionId) {
+    public void markVoterVotedForPost(final String voterId,
+                                      final String electionId,
+                                      final String votedPosts) {
         try {
             jdbcTemplate.update(
                     UPDATE_MARK_VOTING_DONE_QUERY,
+                    votedPosts,
                     voterId,
                     electionId
             );
         } catch (DataAccessException ex) {
-            // TODO: Add logger
+            ConsoleLogger.Log(ControllerOperations.DB_UPDATE_MARK_VOTER_VOTED_FOR_POST, ex.getMessage(),
+                    "VoterId:", voterId, "ElectionId:", electionId, "VotedPosts", votedPosts);
             throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
         }
     }

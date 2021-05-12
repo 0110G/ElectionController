@@ -3,6 +3,7 @@ package com.ElectionController.Structures;
 public class VoterMap {
     private String voterId;
     private String electionId;
+    private String hasVoted;
     private boolean isVoterEligible;
     private boolean isVoterAdmin;
 
@@ -38,6 +39,14 @@ public class VoterMap {
         isVoterAdmin = voterAdmin;
     }
 
+    public String getHasVoted() {
+        return this.hasVoted;
+    }
+
+    public void setHasVoted(String hasVoted) {
+        this.hasVoted = hasVoted;
+    }
+
     @Override
     public String toString() {
         return "VoterMap{" +
@@ -45,6 +54,7 @@ public class VoterMap {
                 ", electionId='" + electionId + '\'' +
                 ", isVoterEligible=" + isVoterEligible +
                 ", isVoterAdmin=" + isVoterAdmin +
+                ", hasVoted=" + hasVoted +
                 '}';
     }
 }
