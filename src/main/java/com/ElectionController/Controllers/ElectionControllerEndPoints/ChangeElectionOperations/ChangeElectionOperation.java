@@ -12,7 +12,7 @@ public class ChangeElectionOperation extends ElectionController {
                                                 final ControllerOperations controllerOperations) {
         Election election = null;
         try {
-            election = h2Getter.getElection(electionId);
+            election = dbGetter.getElection(electionId);
             if (election == null ||
                 election.getAdminVoterId() == null ||
                 !election.getAdminVoterId().equals(adminVoterId)) {

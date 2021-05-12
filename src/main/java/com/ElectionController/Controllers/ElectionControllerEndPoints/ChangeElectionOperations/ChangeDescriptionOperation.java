@@ -46,7 +46,7 @@ public class ChangeDescriptionOperation extends ChangeElectionOperation {
 
         ElectionConsistencyCheck(requestedElection, changeDescriptionQuery);
         requestedElection.setElectionDescription(changeDescriptionQuery.getElectionDescription());
-        h2Updater.updateElection(changeDescriptionQuery.getElectionId(), requestedElection);
+        dbUpdater.updateElection(changeDescriptionQuery.getElectionId(), requestedElection);
 
         return new Response.Builder()
                 .withStatus(ResponseCodes.SUCCESS.getResponse())

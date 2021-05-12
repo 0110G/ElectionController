@@ -22,7 +22,7 @@ import java.util.List;
 
 @Configuration
 @Repository
-public class H2Getter implements Query{
+public class H2Getter implements DBGetter {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

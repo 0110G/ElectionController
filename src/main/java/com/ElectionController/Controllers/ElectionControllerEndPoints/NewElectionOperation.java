@@ -58,7 +58,9 @@ public class NewElectionOperation extends ElectionController {
         final Election regElection = mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
 
         // Inserting the registered election to the table, contacting DBConnector
-        Election election =  h2Putter.registerElection(regElection);
+        dbPutter.registerElection(regElection);
+
+        Election election = regElection;
 
         // Adding the admin
         VoterMap voterMap = new VoterMap();
@@ -66,7 +68,7 @@ public class NewElectionOperation extends ElectionController {
         voterMap.setElectionId(Integer.toString(currentId));
         voterMap.setVoterAdmin(true);
         voterMap.setVoterEligible(true);
-        h2Putter.registerVoterForElection(voterMap);
+        dbPutter.registerVoterForElection(voterMap);
 
         electionControllerHelper.addVotersToElection(getUniqueEntities(newElectionQuery.getRegisteredVoters()),
                 election.getElectionId(),
@@ -88,7 +90,7 @@ public class NewElectionOperation extends ElectionController {
             for(String contestantId : distinctRegisteredContestants) {
                 Voter contestant = null;
                 try {
-                    contestant = h2Getter.getVoter(contestantId);
+                    contestant = dbGetter.getVoter(contestantId);
                 } catch (InvalidCredentialException ex) {
                     ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "Invalid contestant",
                             "Contestantid:", contestantId);
@@ -98,7 +100,7 @@ public class NewElectionOperation extends ElectionController {
                 postMap.setPostId(newPost.getPostId());
                 postMap.setContestantAlias(contestant.getVoterName());
                 postMap.setContestantId(contestant.getVoterId());
-                h2Putter.registerCandidatesForPost(postMap);
+                dbPutter.registerCandidatesForPost(postMap);
                 contestant.setVoterPassword("************");
                 contestant.setElectionList(null);
                 newPost.getContestants().add(contestant);
@@ -106,7 +108,7 @@ public class NewElectionOperation extends ElectionController {
             // After newPost is completely build, then only register this new post
             // to db.
             try {
-                h2Putter.registerPostForElection(newPost);
+                dbPutter.registerPostForElection(newPost);
             } catch (RestrictedActionException ex) {
                 ConsoleLogger.Log(ControllerOperations.NEW_ELECTION, "ERROR_CREATING_POST", post);
                 throw new RestrictedActionException("Unable to create post");
@@ -134,7 +136,7 @@ public class NewElectionOperation extends ElectionController {
         TreeSet<String> treeSet = new TreeSet<>(newElectionQuery.getRegisteredVoters());
         treeSet.add(newElectionQuery.getVoterId());
         for (String voterId : treeSet) {
-            Voter voter = h2Getter.getVoter(voterId);
+            Voter voter = dbGetter.getVoter(voterId);
             voter.setVoterPassword("************");
             voter.setElectionList(null);
             regElection.getEligibleVoters().add(voter);

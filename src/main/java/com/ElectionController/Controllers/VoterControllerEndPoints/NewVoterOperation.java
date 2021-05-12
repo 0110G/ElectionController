@@ -19,9 +19,9 @@ public class NewVoterOperation extends ActionController {
 
     @PutMapping("/NewVoter")
     public Response CreateVoter(@RequestBody NewVoterQuery newVoterQuery) {
-        Voter voter = mapNewVoterQueryToVoter(newVoterQuery, Integer.toString(currentVoterId) + "0");
+        Voter voter = mapNewVoterQueryToVoter(newVoterQuery, Integer.toString(currentVoterId) + "00");
         try {
-            h2Putter.registerVoter(voter);
+            dbPutter.registerVoter(voter);
         } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ControllerOperations.NEW_VOTER, "Cannot create new voter",
                     newVoterQuery);

@@ -8,14 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 
-import javax.xml.crypto.Data;
 import java.sql.Types;
 
 @Configuration
-@Repository
-public class H2Putter implements Query {
+public class H2Putter implements DBPutter {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -62,7 +59,7 @@ public class H2Putter implements Query {
             "VALUES (?, ?, ?)";
 
     @Override
-    public Election registerElection(final Election election) {
+    public void registerElection(final Election election) {
         try {
             jdbcTemplate.update(REGISTER_ELECTION_QUERY,
                     new Object[]{election.getElectionTitle(),
@@ -73,7 +70,6 @@ public class H2Putter implements Query {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}
             );
-            return election;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_ELECTION, ex.getMessage(), election);
             throw new RestrictedActionException("Error While Creating Entry in Election");
@@ -81,7 +77,7 @@ public class H2Putter implements Query {
     }
 
     @Override
-    public VoterMap registerVoterForElection(final VoterMap voterMap) {
+    public void registerVoterForElection(final VoterMap voterMap) {
         try {
             jdbcTemplate.update(REGISTER_VOTER_ELECTION_QUERY,
                     new Object[]{voterMap.getVoterId(),
@@ -91,7 +87,6 @@ public class H2Putter implements Query {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.BIT, Types.BIT}
             );
-            return voterMap;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTERMAP, ex.getMessage(), voterMap);
             throw new RestrictedActionException("Error While Creating Entry in VOTERMAP");
@@ -99,7 +94,7 @@ public class H2Putter implements Query {
     }
 
     @Override
-    public Post registerPostForElection(final Post post) {
+    public void registerPostForElection(final Post post) {
         try {
             jdbcTemplate.update(REGISTER_POST_ELECTION_QUERY,
                     new Object[]{
@@ -111,7 +106,6 @@ public class H2Putter implements Query {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.INTEGER, Types.INTEGER}
             );
-            return post;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_POST, ex.getMessage(), post);
             throw new RestrictedActionException("Error While creating Entry in POST");
@@ -119,7 +113,7 @@ public class H2Putter implements Query {
     }
 
     @Override
-    public PostMap registerCandidatesForPost(final PostMap postMap) {
+    public void registerCandidatesForPost(final PostMap postMap) {
         try {
             jdbcTemplate.update(REGISTER_CANDIDATE_POST_QUERY,
                     new Object[]{
@@ -130,7 +124,6 @@ public class H2Putter implements Query {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.INTEGER}
             );
-            return postMap;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_POSTMAP, ex.getMessage(), postMap);
             throw new RestrictedActionException("Error while registering candidate for post");
@@ -138,7 +131,7 @@ public class H2Putter implements Query {
     }
 
     @Override
-    public Voter registerVoter(final Voter voter) {
+    public void registerVoter(final Voter voter) {
         try {
             jdbcTemplate.update(REGISTER_VOTER_QUERY,
                     new Object[]{
@@ -148,7 +141,6 @@ public class H2Putter implements Query {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}
             );
-            return voter;
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTER, ex.getMessage(), voter);
             throw new RestrictedActionException("Error while creating new voter");

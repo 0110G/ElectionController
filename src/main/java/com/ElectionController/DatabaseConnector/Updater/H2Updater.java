@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Configuration
 @Repository
-public class H2Updater implements Query {
+public class H2Updater implements DBUpdater {
 
     private static final String UPDATE_ELECTION_QUERY =
             "UPDATE ELECTION SET " +

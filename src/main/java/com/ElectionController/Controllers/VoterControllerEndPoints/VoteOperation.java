@@ -40,7 +40,7 @@ public class VoteOperation extends ActionController {
         }
 
         // Add entry to POSTMAP
-        h2Updater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
+        dbUpdater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
 
         return Response.Builder()
                 .withResponse(null)
@@ -52,7 +52,7 @@ public class VoteOperation extends ActionController {
     // Returns true if given post exists and belongs to election
     private boolean checkIfPostBelongsToElection(final String electionId, final String postId) {
         try {
-            h2Getter.getElectionPost(electionId, postId);
+            dbGetter.getElectionPost(electionId, postId);
             return true;
         } catch (InvalidCredentialException ex) {
             return false;
@@ -61,7 +61,7 @@ public class VoteOperation extends ActionController {
 
     private boolean checkIfCandidateBelongsToPost(final String postId, final String contestantId) {
         try {
-            h2Getter.getPostCandidate(postId, contestantId);
+            dbGetter.getPostCandidate(postId, contestantId);
             return true;
         } catch (InvalidCredentialException ex) {
             return false;
@@ -69,7 +69,7 @@ public class VoteOperation extends ActionController {
     }
 
     private boolean checkIfVoterHasVoted(final String voterId, final String electionId) {
-        return h2Getter.getVoterMap(voterId, electionId).getVoterEligible();
+        return dbGetter.getVoterMap(voterId, electionId).getVoterEligible();
     }
 
 }

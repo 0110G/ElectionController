@@ -1,13 +1,12 @@
 package com.ElectionController.Helpers;
 
-import com.ElectionController.DatabaseConnector.Deleter.H2Deleter;
-import com.ElectionController.DatabaseConnector.Getter.H2Getter;
-import com.ElectionController.DatabaseConnector.Putter.H2Putter;
+import com.ElectionController.DatabaseConnector.Deleter.DBDeletor;
+import com.ElectionController.DatabaseConnector.Getter.DBGetter;
+import com.ElectionController.DatabaseConnector.Putter.DBPutter;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Structures.Post;
 import com.ElectionController.Structures.Voter;
 import com.ElectionController.Structures.VoterMap;
-import javafx.geometry.Pos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,13 +18,13 @@ import java.util.stream.Collectors;
 public class ElectionControllerHelper {
 
     @Autowired
-    private H2Putter h2Putter;
+    private DBPutter dbPutter;
 
     @Autowired
-    private H2Getter h2Getter;
+    private DBGetter dbGetter;
 
     @Autowired
-    private H2Deleter h2Deleter;
+    private DBDeletor dbDeletor;
 
     // Always called after the following authentications:
     // 1: The admin credentials are authentic
@@ -52,7 +51,7 @@ public class ElectionControllerHelper {
             voterMap.setVoterAdmin(false);
             voterMap.setVoterId(voterId);
             voterMap.setElectionId(electionId);
-            h2Putter.registerVoterForElection(voterMap);
+            dbPutter.registerVoterForElection(voterMap);
         }
     }
 
@@ -60,19 +59,19 @@ public class ElectionControllerHelper {
                                           final String electionId,
                                           final String electionAdmin,
                                           boolean strictDelete) {
-        List<Post>registeredPost = h2Getter.getElectionPosts(electionId);
+        List<Post>registeredPost = dbGetter.getElectionPosts(electionId);
         for (String voterId : votersToDelete) {
             if (electionAdmin.equals(voterId)) {continue;}
             if (strictDelete) {
-                h2Deleter.deleteVoterFromElection(voterId, electionId);
+                dbDeletor.deleteVoterFromElection(voterId, electionId);
                 List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
                 for (String postId : reg) {
-                    h2Deleter.deleteCandidateFromPost(postId, voterId);
+                    dbDeletor.deleteCandidateFromPost(postId, voterId);
                 }
             } else {
                 List<String> reg = getPostsForWhichVoterIsCandidate(registeredPost, voterId);
                 if (reg.isEmpty()) {
-                    h2Deleter.deleteVoterFromElection(voterId, electionId);
+                    dbDeletor.deleteVoterFromElection(voterId, electionId);
                 }
             }
         }
@@ -80,7 +79,7 @@ public class ElectionControllerHelper {
 
     private boolean voterIdValid(final String voterId) {
         try {
-            h2Getter.getVoter(voterId);
+            dbGetter.getVoter(voterId);
             return true;
         } catch (InvalidCredentialException ex) {
             return false;

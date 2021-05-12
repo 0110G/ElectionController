@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.awt.color.ColorSpace;
 
 @Configuration
-public class H2Deleter implements Query {
+@Repository
+public class H2Deleter implements DBDeletor {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

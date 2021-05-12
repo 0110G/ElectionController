@@ -46,7 +46,7 @@ public class ChangeTitleOperation extends ChangeElectionOperation {
 
         ElectionConsistencyCheck(requestedElection, changeElectionTitleQuery);
         requestedElection.setElectionTitle(changeElectionTitleQuery.getElectionTitle());
-        h2Updater.updateElection(changeElectionTitleQuery.getElectionId(), requestedElection);
+        dbUpdater.updateElection(changeElectionTitleQuery.getElectionId(), requestedElection);
 
         return new Response.Builder()
                 .withStatus(ResponseCodes.SUCCESS.getResponse())

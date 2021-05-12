@@ -54,7 +54,7 @@ public class AddRegisteredVoterOperation extends ChangeElectionOperation {
         }
 
         // Set of already registered
-        Set<String> voters = h2Getter.getElectionVoters(addRegisteredVoterToElectionQuery.getElectionId())
+        Set<String> voters = dbGetter.getElectionVoters(addRegisteredVoterToElectionQuery.getElectionId())
                 .stream().map(Voter::getVoterId).collect(Collectors.toSet());
 
         // There might be voterIds already present in election.

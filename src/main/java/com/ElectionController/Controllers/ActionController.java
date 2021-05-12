@@ -1,27 +1,27 @@
 package com.ElectionController.Controllers;
 
 import com.ElectionController.Constants.ControllerOperations;
-import com.ElectionController.DatabaseConnector.Getter.H2Getter;
-import com.ElectionController.DatabaseConnector.Putter.H2Putter;
-import com.ElectionController.DatabaseConnector.Updater.H2Updater;
+import com.ElectionController.DatabaseConnector.Getter.DBGetter;
+import com.ElectionController.DatabaseConnector.Putter.DBPutter;
+import com.ElectionController.DatabaseConnector.Updater.DBUpdater;
 import com.ElectionController.Exceptions.InvalidCredentialException;
 import com.ElectionController.Structures.Voter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ActionController {
     @Autowired
-    protected H2Getter h2Getter;
+    protected DBGetter dbGetter;
 
     @Autowired
-    protected H2Putter h2Putter;
+    protected DBPutter dbPutter;
 
     @Autowired
-    protected H2Updater h2Updater;
+    protected DBUpdater dbUpdater;
 
     protected Voter getAuthenticatedVoter(final String voterId,
                                           final String voterPassword,
                                           final ControllerOperations controllerOperation) {
-        Voter voter = h2Getter.getVoter(voterId);
+        Voter voter = dbGetter.getVoter(voterId);
         if (voter != null) {
             if (voter.getVoterPassword() == null ||
                     !voter.getVoterPassword().equals(voterPassword)) {

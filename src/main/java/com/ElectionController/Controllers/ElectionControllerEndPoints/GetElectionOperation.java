@@ -35,7 +35,7 @@ public class GetElectionOperation extends ElectionController {
         VoterConsitencyCheck(voter, getElectionQuery);
 
         try {
-            h2Getter.getVoterMap(getElectionQuery.getVoterId(),  getElectionQuery.getElectionId());
+            dbGetter.getVoterMap(getElectionQuery.getVoterId(),  getElectionQuery.getElectionId());
         } catch (InvalidCredentialException ex) {
             ConsoleLogger.Log(ControllerOperations.GET_ELECTION, ex.getErrorMessage(),
                     getElectionQuery);
@@ -45,7 +45,7 @@ public class GetElectionOperation extends ElectionController {
         // This is not required
         Election election = null;
         try {
-            election = h2Getter.getElection(getElectionQuery.getElectionId());
+            election = dbGetter.getElection(getElectionQuery.getElectionId());
         } catch (InvalidCredentialException ex) {
             ConsoleLogger.Log(ControllerOperations.GET_ELECTION, ex.getErrorMessage(),
                     getElectionQuery);
@@ -54,7 +54,7 @@ public class GetElectionOperation extends ElectionController {
 
         List<Voter> registeredVoters = maskVoterPassword(election.getEligibleVoters());
         election.setEligibleVoters(registeredVoters);
-        List<Post> registeredPosts = h2Getter.getElectionPosts(getElectionQuery.getElectionId());
+        List<Post> registeredPosts = dbGetter.getElectionPosts(getElectionQuery.getElectionId());
         int index = 0;
         for (Post post : registeredPosts) {
             List<Voter> registeredCandidatesForPost = maskVoterPassword(post.getContestants());
