@@ -10,6 +10,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class H2Putter implements DBPutter {
@@ -70,6 +72,19 @@ public class H2Putter implements DBPutter {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}
             );
+
+            // Registering election voters
+            List<VoterMap> voterMaps = getVoterMapsFromElection(election);
+            for (VoterMap voterMap : voterMaps) {
+                registerVoterForElection(voterMap);
+            }
+
+            // Registering election posts
+            for (Post post : election.getAvailablePost()) {
+                registerPostForElection(post);
+            }
+
+
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_ELECTION, ex.getMessage(), election);
             throw new RestrictedActionException("Error While Creating Entry in Election");
@@ -87,6 +102,7 @@ public class H2Putter implements DBPutter {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.BIT, Types.BIT}
             );
+
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTERMAP, ex.getMessage(), voterMap);
             throw new RestrictedActionException("Error While Creating Entry in VOTERMAP");
@@ -106,6 +122,10 @@ public class H2Putter implements DBPutter {
                     },
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.INTEGER, Types.INTEGER}
             );
+            List<PostMap> postMaps = getPostMapsFromPosts(post);
+            for (PostMap postMap : postMaps) {
+                registerCandidatesForPost(postMap);
+            }
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_POST, ex.getMessage(), post);
             throw new RestrictedActionException("Error While creating Entry in POST");
@@ -145,5 +165,32 @@ public class H2Putter implements DBPutter {
             ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTER, ex.getMessage(), voter);
             throw new RestrictedActionException("Error while creating new voter");
         }
+    }
+
+    private List<VoterMap> getVoterMapsFromElection(final Election election) {
+        List<VoterMap> voterMaps = new ArrayList<>();
+        if (election == null) {return voterMaps;}
+        for (Voter voter : election.getEligibleVoters()) {
+            VoterMap voterMap = new VoterMap();
+            voterMap.setVoterId(voter.getVoterId());
+            voterMap.setVoterEligible(true);
+            voterMap.setElectionId(election.getElectionId());
+            voterMap.setVoterAdmin(election.getAdminVoterId().equals(voter.getVoterId()));
+            voterMaps.add(voterMap);
+        }
+        return voterMaps;
+    }
+
+    private List<PostMap> getPostMapsFromPosts(final Post post) {
+        List<PostMap> postMaps = new ArrayList<>();
+        if (post == null) {return postMaps;}
+        for (Voter contestant : post.getContestants()) {
+            PostMap postMap = new PostMap();
+            postMap.setPostId(post.getPostId());
+            postMap.setContestantId(contestant.getVoterId());
+            postMap.setContestantAlias(contestant.getVoterName());
+            postMaps.add(postMap);
+        }
+        return postMaps;
     }
 }

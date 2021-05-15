@@ -86,11 +86,11 @@ public class H2Getter implements DBGetter {
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
-            throw new InvalidCredentialException("VOTER_DOES_NOT_EXISTS");
+            throw new InvalidCredentialException("VOTER_DOES_NOT_EXISTS, VoterId: " + voterId);
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED, VoterId: " + voterId);
         }
     }
 

@@ -31,7 +31,7 @@ public class ElectionControllerHelper {
     // 2: The election id is authentic
     // 3: The query requester is election admin
     public void addVotersToElection(final List<String> voters, final String electionId, final String electionAdmin) {
-
+        voters.add(electionAdmin);
         // Verifying that the set of voters is legitimate
         boolean verifyVotersList = true;
         for (String voterId : voters) {

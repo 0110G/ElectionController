@@ -20,17 +20,34 @@ public class NewElectionQuery {
             return postDescription;
         }
 
-        public void setPostDescription(String postDescription) {
-            this.postDescription = postDescription;
-        }
-
         public List<String> getRegisteredContestants() {
             return registeredContestants;
         }
 
-        public void setRegisteredContestants(List<String> registeredContestants) {
-            if (registeredContestants != null) {
-                this.registeredContestants = registeredContestants;
+        public static Builder Builder() {return new Builder();}
+
+        public static class Builder {
+            private String postDescription;
+            private List<String> registeredContestants = new ArrayList<String>();
+
+
+            public Builder withPostDescription(final String postDescription) {
+                this.postDescription = postDescription;
+                return this;
+            }
+
+            public Builder withRegisteredContestants(final List<String> registeredContestants) {
+                if (registeredContestants != null) {
+                    this.registeredContestants = registeredContestants;
+                }
+                return this;
+            }
+
+            public Post build() {
+                Post post = new Post();
+                post.postDescription = this.postDescription;
+                post.registeredContestants = this.registeredContestants;
+                return post;
             }
         }
 
