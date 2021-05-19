@@ -70,5 +70,4 @@ public class Response {
             return response;
         }
     }
-
 }
