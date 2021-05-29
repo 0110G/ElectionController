@@ -1,5 +1,7 @@
 package com.electionController.exceptions;
 
+import com.electionController.constants.ResponseCodes;
+
 public class RestrictedActionException extends RuntimeException{
     private String errorMessage;
     private int errorCode;
@@ -7,6 +9,11 @@ public class RestrictedActionException extends RuntimeException{
     public RestrictedActionException(String message) {
         this.errorMessage = message;
         this.errorCode = 404;
+    }
+
+    public RestrictedActionException(ResponseCodes responseCode) {
+        this.errorMessage = responseCode.getResponse();
+        this.errorCode = responseCode.getResponseCode();
     }
 
     public String getErrorMessage() {
