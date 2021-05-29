@@ -1,18 +1,13 @@
-import com.ElectionController.Constants.ResponseCodes;
-import com.ElectionController.Controllers.ElectionControllerEndPoints.NewElectionOperation;
-import com.ElectionController.DatabaseConnector.Getter.DBGetter;
-import com.ElectionController.DatabaseConnector.Putter.DBPutter;
-import com.ElectionController.Exceptions.InvalidCredentialException;
-import com.ElectionController.Exceptions.InvalidParameterException;
-import com.ElectionController.Structures.APIParams.NewElectionQuery;
-import com.ElectionController.Structures.Election;
-import com.ElectionController.Structures.Voter;
+import com.electionController.controllers.ElectionControllerEndPoints.NewElectionOperation;
+import com.electionController.dbConnector.Getter.DBGetter;
+import com.electionController.dbConnector.Putter.DBPutter;
+import com.electionController.exceptions.InvalidCredentialException;
+import com.electionController.exceptions.InvalidParameterException;
+import com.electionController.structures.APIParams.NewElectionQuery;
+import com.electionController.structures.Voter;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
