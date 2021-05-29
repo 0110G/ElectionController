@@ -1,6 +1,11 @@
 package com.electionController.dbConnector.Getter;
 
-import com.electionController.structures.*;
+import com.electionController.structures.Election;
+import com.electionController.structures.Voter;
+import com.electionController.structures.VoterMap;
+import com.electionController.structures.Post;
+import com.electionController.structures.PostMap;
+import com.electionController.structures.Contestant;
 
 import java.util.List;
 

@@ -4,7 +4,11 @@ import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.logger.ConsoleLogger;
-import com.electionController.structures.*;
+import com.electionController.structures.Election;
+import com.electionController.structures.Voter;
+import com.electionController.structures.Contestant;
+import com.electionController.structures.Post;
+import com.electionController.structures.Response;
 import com.electionController.structures.APIParams.NewElectionQuery;
 import com.electionController.facades.AuthenticationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +41,6 @@ public class NewElectionOperation extends ElectionController {
         // Body contains Valid Parameters
         ValidateNotNull(newElectionQuery);
 
-        System.out.println(newElectionQuery.toString());
-
         // Voter tries to authenticate himself
         try {
             authenticationFacade.validateVoterCredentials(newElectionQuery.getVoterId(),
@@ -49,7 +51,6 @@ public class NewElectionOperation extends ElectionController {
             throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS);
         }
 
-        System.out.println(newElectionQuery.toString());
         // Creating a new election based on query
         Election regElection = null;
         try {
@@ -120,6 +121,7 @@ public class NewElectionOperation extends ElectionController {
                 contestant.setVoterId(contestantId);
                 contestant.setElectionList(null);
                 contestant.setVotesSecured(0);
+                contestant.setRank(1);
                 contestants.add(contestant);
             }
             newPost.setContestants(contestants);

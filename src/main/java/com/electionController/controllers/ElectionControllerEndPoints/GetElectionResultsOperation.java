@@ -28,24 +28,8 @@ public class GetElectionResultsOperation extends ElectionController{
      * @Params: GetElectionResultsQuery
      *  @Required: voterId
      *  @Required: voterPassword
-     *  @Required: electionId
-     *
-     * @Operation:
-     *  (1) Authentication
-     *      - (1a) voterId must be valid
-     *              - If no, throw InvalidCredentialException
-     *      - (1b) voterPassword must be correct
-     *              - If no, throw InvalidCredentialException
-     *      - (1c) electionId must be valid
-     *              - If no, throw InvalidCredentialException
-     *      - (1c) voter must be admin of the election
-     *              - If no, throw InvalidCredentialException
-     *
-     *
-     * @Returns
-     *
-    * */
-
+     *  @Required: election
+     */
     private static final ControllerOperations ACTION = ControllerOperations.GET_ELECTION_RESULTS;
 
     @Autowired
@@ -53,6 +37,8 @@ public class GetElectionResultsOperation extends ElectionController{
 
     @GetMapping("/GetResults")
     public Response GetResults(@RequestBody GetElectionResultsQuery getElectionResultsQuery) {
+
+        ValidateNotNull(getElectionResultsQuery);
 
         try {
             authenticationFacade.validateVoterCredentials(getElectionResultsQuery.getVoterId(),
@@ -109,10 +95,6 @@ public class GetElectionResultsOperation extends ElectionController{
                 }
                 prevVotes = p.getContestantList().get(i).getVotesSecured();
             }
-//            for (Contestant contestant : p.getContestantList()) {
-//                contestant.setRank(current);
-//                current++;
-//            }
             electionResults.getElectionPostResults().add(p);
         }
         return electionResults;

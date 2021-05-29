@@ -40,4 +40,24 @@ public class Voter {
     public void setElectionList(List<VoterMap> electionList) {
         this.electionList = electionList;
     }
+
+    @Override
+    public String toString() {
+        return "Voter{" +
+                "voterId='" + voterId + '\'' +
+                ", voterName='" + voterName + '\'' +
+                ", voterPassword='" + voterPassword + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Voter voter = (Voter) o;
+        return getVoterId().equals(voter.getVoterId())
+                && getVoterPassword().equals(voter.getVoterPassword())
+                && getVoterName().equals(voter.getVoterName());
+    }
+
 }
