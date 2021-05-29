@@ -22,7 +22,7 @@ public class ChangeElectionTitleQuery {
         return this.electionTitle;
     }
 
-    public static ChangeElectionTitleQuery.Builder builder(){return new Builder();}
+    public static Builder Builder(){return new Builder();}
 
     public static class Builder {
         private String voterId;

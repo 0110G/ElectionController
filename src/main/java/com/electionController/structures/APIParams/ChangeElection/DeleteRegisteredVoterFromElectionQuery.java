@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeleteRegisteredVoterFromElectionQuery {
-
     private String voterId;
     private String voterPassword;
     private String electionId;
@@ -31,7 +30,7 @@ public class DeleteRegisteredVoterFromElectionQuery {
         return this.forceDelete;
     }
 
-    public static Builder build() {return new Builder();}
+    public static Builder Builder() {return new Builder();}
 
     public static class Builder {
         private String voterId;

@@ -22,7 +22,7 @@ public class ChangeElectionDescriptionQuery {
         return this.electionDescription;
     }
 
-    public static Builder builder(){return new Builder();}
+    public static Builder Builder(){return new Builder();}
 
     public static class Builder {
         private String voterId;
@@ -59,6 +59,4 @@ public class ChangeElectionDescriptionQuery {
             return changeElectionDescriptionQuery;
         }
     }
-
-
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewElectionQuery {
-
     private String voterId;
     private String voterPassword;
     private String electionTitle;

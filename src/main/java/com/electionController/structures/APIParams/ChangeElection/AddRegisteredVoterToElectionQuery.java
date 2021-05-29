@@ -25,7 +25,7 @@ public class AddRegisteredVoterToElectionQuery {
         return this.voterIdsToAdd;
     }
 
-    public static Builder build() {return new Builder();}
+    public static Builder Builder() {return new Builder();}
 
     public static class Builder {
         private String voterId;

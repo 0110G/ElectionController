@@ -17,7 +17,7 @@ public class GetElectionQuery {
         return this.electionId;
     }
 
-    public static Builder builder() {return new Builder();}
+    public static Builder Builder() {return new Builder();}
 
     public static class Builder {
         private String voterId;
