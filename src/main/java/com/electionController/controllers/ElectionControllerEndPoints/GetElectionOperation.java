@@ -7,8 +7,9 @@ import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.Election;
-import com.electionController.structures.Post;
+import com.electionController.structures.Voter;
 import com.electionController.structures.Contestant;
+import com.electionController.structures.Post;
 import com.electionController.structures.Response;
 import com.electionController.structures.APIParams.GetElectionQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,10 +60,9 @@ public class GetElectionOperation extends ElectionController {
 
         assert election != null;
 
-        // TODO: Add logic to mask voter passwords
-        //election.setEligibleVoters(maskVoterPassword(election.getEligibleVoters()));
+        election.setEligibleVoters((List<Voter>) maskVoterPassword(election.getEligibleVoters()));
         for (Post post : election.getAvailablePost()) {
-            post.setContestants(maskVoterPassword(post.getContestants()));
+            post.setContestants((List<Contestant>) maskVoterPassword(post.getContestants()));
         }
 
         return new Response.Builder()
@@ -73,10 +73,10 @@ public class GetElectionOperation extends ElectionController {
 
     }
 
-    private List<Contestant> maskVoterPassword(List<Contestant> unmaksedVoters) {
-        for (Contestant v : unmaksedVoters) {
+    private List<? extends Voter> maskVoterPassword(List<? extends Voter> unmaskedVoters) {
+        for (Voter v : unmaskedVoters) {
             v.setVoterPassword("**********");
         }
-        return unmaksedVoters;
+        return unmaskedVoters;
     }
 }

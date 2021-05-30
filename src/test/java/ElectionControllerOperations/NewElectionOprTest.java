@@ -32,6 +32,17 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 
 public class NewElectionOprTest {
+    @InjectMocks
+    private NewElectionOperation newElectionOperation;
+
+    @Mock
+    private DBGetter dbGetter;
+
+    @Mock
+    private DBPutter dbPutter;
+
+    @Mock
+    private AuthenticationFacade authenticationFacade;
 
     private static final String VALID_VOTER_ID = "VALID_VOTER_ID";
     private static final String VALID_VOTER_ID1 = "VALID_VOTER_ID1";
@@ -45,17 +56,6 @@ public class NewElectionOprTest {
     private static final String CORRECT_VOTER_PASSWORD = "CORRECT_PASSWORD";
     private static final String INCORRECT_VOTER_PASSWORD = "INCORRECT_VOTER_PASSWORD";
 
-    @InjectMocks
-    private NewElectionOperation newElectionOperation;
-
-    @Mock
-    private DBGetter dbGetter;
-
-    @Mock
-    private DBPutter dbPutter;
-
-    @Mock
-    AuthenticationFacade authenticationFacade;
 
     @Before
     public void init() {
@@ -71,7 +71,7 @@ public class NewElectionOprTest {
     }
 
     @Test(expected = InvalidCredentialException.class)
-    public void test_shouldThrowExceptionWhenInvalidVoterIdPassed() {
+    public void test_shouldThrowInvalidCredentialExceptionWhenInvalidVoterIdPassed() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
                 .withVoterId(INVALID_VOTER_ID)
                 .withVoterPassword(CORRECT_VOTER_PASSWORD)
@@ -82,9 +82,8 @@ public class NewElectionOprTest {
                 .callNewElectionRequest();
     }
 
-
     @Test(expected = InvalidCredentialException.class)
-    public void test_shouldThrowInvalidParamExceptionWhenIncorrectPasswordPassed() {
+    public void test_shouldThrowInvalidCredentialExceptionWhenIncorrectPasswordPassed() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
                 .withVoterId(VALID_VOTER_ID)
                 .withVoterPassword(INCORRECT_VOTER_PASSWORD)
@@ -236,8 +235,7 @@ public class NewElectionOprTest {
         return contestants;
     }
 
-    public class TestRunner {
-        // -->
+    private class TestRunner {
         private NewElectionQuery newElectionQuery;
         private Response expectedResponse;
         private Response actualResponse;
@@ -247,7 +245,6 @@ public class NewElectionOprTest {
             doNothing().when(authenticationFacade).validateElectionAdmin(anyString(), anyString());
         }
 
-        //
         TestRunner setNewElectionQuery(NewElectionQuery newElectionQuery) {
             this.newElectionQuery = newElectionQuery;
             return this;

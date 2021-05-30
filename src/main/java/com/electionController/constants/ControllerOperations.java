@@ -15,6 +15,7 @@ public enum ControllerOperations {
 
     GET_ELECTION ("ElectionController", "GetElection"),
     GET_ELECTION_RESULTS ("ElectionController", "GetElectionResults"),
+    GET_VOTER ("ElectionController", "GetVoter"),
 
     VOTER_VOTE("VoterController", "VoterVote"),
 
