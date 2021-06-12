@@ -1,6 +1,7 @@
 package ElectionControllerOperations;
 
 import com.electionController.constants.ResponseCodes;
+import com.electionController.constants.TestConstants;
 import com.electionController.controllers.ElectionControllerEndPoints.GetElectionOperation;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.exceptions.InvalidCredentialException;
@@ -17,10 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 public class GetElectionOprTest {
 
@@ -32,14 +34,6 @@ public class GetElectionOprTest {
 
     @Mock
     private DBGetter dbGetter;
-
-    private static final String VALID_VOTER_ID = "VALID_VOTER_ID";
-    private static final String VALID_VOTER_ID1 = "VALID_VOTER_ID1";
-    private static final String INVALID_VOTER_ID = "INVALID_VOTER_ID";
-    private static final String CORRECT_PASSWORD = "CORRECT_PASSWORD";
-    private static final String INCORRECT_VOTER_PASSWORD = "INCORRECT_VOTER_PASSWORD";
-    private static final String VALID_ELECTION_ID = "VALID_ELECTION_ID";
-    private static final String INVALID_ELECTION_ID = "INVALID_ELECTION_ID";
 
     @Before
     public void init() {MockitoAnnotations.initMocks(this);}
@@ -54,52 +48,52 @@ public class GetElectionOprTest {
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenInvalidVoterIdPassed() {
         GetElectionQuery getElectionQuery = GetElectionQuery.Builder()
-                .withVoterId(INVALID_VOTER_ID)
-                .withVoterPassword(CORRECT_PASSWORD)
+                .withVoterId(TestConstants.INVALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
         new TestRunner()
                 .setGetElectionQuery(getElectionQuery)
-                .setInvalidVoterId(INVALID_VOTER_ID)
+                .setInvalidVoterId(TestConstants.INVALID_VOTER_ID)
                 .callGetElectionOperation();
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenIncorrectPasswordPassed() {
         GetElectionQuery getElectionQuery = GetElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(INCORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.INCORRECT_VOTER_PASSWORD)
                 .build();
         new TestRunner()
                 .setGetElectionQuery(getElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_PASSWORD)
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .callGetElectionOperation();
     }
 
     @Test(expected = RestrictedActionException.class)
     public void test_shouldThrowRestrictedActionExceptionWhenInvalidElectionIdPassed() {
         GetElectionQuery getElectionQuery = GetElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(CORRECT_PASSWORD)
-                .withElectionId(INVALID_ELECTION_ID)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
+                .withElectionId(TestConstants.INVALID_ELECTION_ID)
                 .build();
         new TestRunner()
                 .setGetElectionQuery(getElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_PASSWORD)
-                .setInvalidElectionId(INVALID_ELECTION_ID)
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .setInvalidElectionId(TestConstants.INVALID_ELECTION_ID)
                 .callGetElectionOperation();
     }
 
     @Test(expected = RestrictedActionException.class)
     public void test_shouldThrowRestrictedActionExceptionWhenVoterNotEligibleToViewGivenElection() {
         GetElectionQuery getElectionQuery = GetElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(CORRECT_PASSWORD)
-                .withElectionId(VALID_ELECTION_ID)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
+                .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .build();
         new TestRunner()
                 .setGetElectionQuery(getElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_PASSWORD)
-                .setVoterIneligibleToViewElection(VALID_VOTER_ID, VALID_ELECTION_ID)
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .setVoterIneligibleToViewElection(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
                 .callGetElectionOperation();
     }
 
@@ -107,9 +101,9 @@ public class GetElectionOprTest {
     public void test_successfulExecution() {
         Election expectedElection = new Election();
         expectedElection.setElectionId("0");
-        expectedElection.setElectionTitle("Election Title");
-        expectedElection.setElectionDescription("Election Description");
-        expectedElection.setAdminVoterId(VALID_VOTER_ID);
+        expectedElection.setElectionTitle(TestConstants.ELECTION_TITLE);
+        expectedElection.setElectionDescription(TestConstants.ELECTION_DESCRIPTION);
+        expectedElection.setAdminVoterId(TestConstants.VALID_VOTER_ID);
 
         Response expectedResponse = Response.Builder()
                 .withResponse(expectedElection)
@@ -118,16 +112,16 @@ public class GetElectionOprTest {
                 .build();
 
         GetElectionQuery getElectionQuery = GetElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withElectionId(VALID_ELECTION_ID)
-                .withVoterPassword(CORRECT_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withElectionId(TestConstants.VALID_ELECTION_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
 
         new TestRunner()
                 .setGetElectionQuery(getElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID,  CORRECT_PASSWORD)
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID,  TestConstants.CORRECT_PASSWORD)
                 .setDbFetchedElection(expectedElection)
-                .mockDbToFetchElection(VALID_ELECTION_ID)
+                .mockDbToFetchElection(TestConstants.VALID_ELECTION_ID)
                 .callGetElectionOperation()
                 .setExpectedResponse(expectedResponse)
                 .verifyGetElectionOperationResponse();
@@ -198,7 +192,6 @@ public class GetElectionOprTest {
         }
 
         TestRunner verifyGetElectionOperationResponse() {
-            System.out.println(actualResponse.getStatus());
             assert actualResponse.getStatus().equals(expectedResponse.getStatus());
             assert actualResponse.getStatusCode() == expectedResponse.getStatusCode();
             assert actualResponse.getResponse().getClass().equals(expectedResponse.getResponse().getClass());

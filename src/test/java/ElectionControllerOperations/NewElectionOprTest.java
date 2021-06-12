@@ -1,6 +1,7 @@
 package ElectionControllerOperations;
 
 import com.electionController.constants.ResponseCodes;
+import com.electionController.constants.TestConstants;
 import com.electionController.controllers.ElectionControllerEndPoints.NewElectionOperation;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.dbConnector.Putter.DBPutter;
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -26,9 +28,11 @@ import java.util.Collections;
 import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 
 public class NewElectionOprTest {
@@ -44,19 +48,6 @@ public class NewElectionOprTest {
     @Mock
     private AuthenticationFacade authenticationFacade;
 
-    private static final String VALID_VOTER_ID = "VALID_VOTER_ID";
-    private static final String VALID_VOTER_ID1 = "VALID_VOTER_ID1";
-    private static final String VALID_VOTER_ID2 = "VALID_VOTER_ID2";
-    private static final String VALID_VOTER_ID3 = "VALID_VOTER_ID3";
-    private static final String VALID_VOTER_ID4 = "VALID_VOTER_ID4";
-
-    private static final String INVALID_VOTER_ID = "INVALID_VOTER_ID";
-    private static final String INVALID_VOTER_ID1 = "INVALID_VOTER_ID1";
-
-    private static final String CORRECT_VOTER_PASSWORD = "CORRECT_PASSWORD";
-    private static final String INCORRECT_VOTER_PASSWORD = "INCORRECT_VOTER_PASSWORD";
-
-
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
@@ -67,92 +58,99 @@ public class NewElectionOprTest {
         NewElectionQuery newElectionQuery = null;
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
-                .callNewElectionRequest();
+                .callNewElectionRequest()
+                .verifyElectionAddedInDBForTimes(0);
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenInvalidVoterIdPassed() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
-                .withVoterId(INVALID_VOTER_ID)
-                .withVoterPassword(CORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.INVALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
-                .setInvalidVoterId(INVALID_VOTER_ID)
-                .callNewElectionRequest();
+                .setInvalidVoterId(TestConstants.INVALID_VOTER_ID)
+                .callNewElectionRequest()
+                .verifyElectionAddedInDBForTimes(0);
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenIncorrectPasswordPassed() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(INCORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.INCORRECT_VOTER_PASSWORD)
                 .build();
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_VOTER_PASSWORD)
-                .callNewElectionRequest();
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .callNewElectionRequest()
+                .verifyElectionAddedInDBForTimes(0);
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidParamExceptionWhenNonValidVoterIdEnteredInRegisteredVotersList() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(CORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .withRegisteredVoters(
-                        Arrays.asList(VALID_VOTER_ID1, VALID_VOTER_ID2, INVALID_VOTER_ID))
+                        Arrays.asList(TestConstants.VALID_VOTER_ID1, TestConstants.VALID_VOTER_ID2, TestConstants.INVALID_VOTER_ID))
                 .build();
+
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_VOTER_PASSWORD)
-                .withDBHavingTheVoter(VALID_VOTER_ID1)
-                .withDBHavingTheVoter(VALID_VOTER_ID2)
-                .withDBNotHavingGivenVoterId(INVALID_VOTER_ID)
-                .callNewElectionRequest();
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID1)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID2)
+                .withDBNotHavingGivenVoterId(TestConstants.INVALID_VOTER_ID)
+                .callNewElectionRequest()
+                .verifyElectionAddedInDBForTimes(0);
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidParamExceptionWhenNonValidVoterIdEnteredInRegisteredCandidatesList() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(CORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .withRegisteredPost(
                         Arrays.asList(
                                 NewElectionQuery.Post.Builder()
-                                        .withRegisteredContestants(Arrays.asList(VALID_VOTER_ID))
+                                        .withRegisteredContestants(Arrays.asList(TestConstants.VALID_VOTER_ID))
                                         .withPostDescription("Post Containing valid voters")
                                         .build(),
                                 NewElectionQuery.Post.Builder()
-                                        .withRegisteredContestants(Arrays.asList(VALID_VOTER_ID1, INVALID_VOTER_ID1))
+                                        .withRegisteredContestants(Arrays.asList(TestConstants.VALID_VOTER_ID1, TestConstants.INVALID_VOTER_ID1))
                                         .withPostDescription("Post Containing invalid voters")
                                         .build()
                         )
                 ).build();
+
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_VOTER_PASSWORD)
-                .withDBHavingTheVoter(VALID_VOTER_ID1)
-                .withDBNotHavingGivenVoterId(INVALID_VOTER_ID1)
-                .callNewElectionRequest();
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID1)
+                .withDBNotHavingGivenVoterId(TestConstants.INVALID_VOTER_ID1)
+                .callNewElectionRequest()
+                .verifyElectionAddedInDBForTimes(0);
     }
 
     @Test
     public void test_successfulExecution() {
         NewElectionQuery newElectionQuery = NewElectionQuery.Builder()
-                .withVoterId(VALID_VOTER_ID)
-                .withVoterPassword(CORRECT_VOTER_PASSWORD)
+                .withVoterId(TestConstants.VALID_VOTER_ID)
+                .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .withElectionTitle("Election Title")
                 .withElectionDescription("Election Description")
                 .withRegisteredVoters(
-                        Arrays.asList(VALID_VOTER_ID1, VALID_VOTER_ID2, VALID_VOTER_ID4, VALID_VOTER_ID3))
+                        Arrays.asList(TestConstants.VALID_VOTER_ID1, TestConstants.VALID_VOTER_ID2, TestConstants.VALID_VOTER_ID4, TestConstants.VALID_VOTER_ID3))
                 .withRegisteredPost(
                         Arrays.asList(
                                 NewElectionQuery.Post.Builder()
-                                        .withRegisteredContestants(Arrays.asList(VALID_VOTER_ID3, VALID_VOTER_ID3))
+                                        .withRegisteredContestants(Arrays.asList(TestConstants.VALID_VOTER_ID3, TestConstants.VALID_VOTER_ID3))
                                         .withPostDescription("Post 1 Description")
                                         .build(),
                                 NewElectionQuery.Post.Builder()
-                                        .withRegisteredContestants(Arrays.asList(VALID_VOTER_ID3, VALID_VOTER_ID4))
+                                        .withRegisteredContestants(Arrays.asList(TestConstants.VALID_VOTER_ID3, TestConstants.VALID_VOTER_ID4))
                                         .withPostDescription("Post 2 Description")
                                         .build()
                         )
@@ -162,24 +160,24 @@ public class NewElectionOprTest {
         expectedElection.setElectionId("0");
         expectedElection.setElectionTitle("Election Title");
         expectedElection.setElectionDescription("Election Description");
-        expectedElection.setAdminVoterId(VALID_VOTER_ID);
+        expectedElection.setAdminVoterId(TestConstants.VALID_VOTER_ID);
 
         expectedElection.setEligibleVoters(
                 Arrays.asList(
-                        getVoter(VALID_VOTER_ID, CORRECT_VOTER_PASSWORD),
-                        getVoter(VALID_VOTER_ID1, CORRECT_VOTER_PASSWORD),
-                        getVoter(VALID_VOTER_ID2, CORRECT_VOTER_PASSWORD),
-                        getVoter(VALID_VOTER_ID3, CORRECT_VOTER_PASSWORD),
-                        getVoter(VALID_VOTER_ID4, CORRECT_VOTER_PASSWORD)
+                        getVoter(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD),
+                        getVoter(TestConstants.VALID_VOTER_ID1, TestConstants.CORRECT_PASSWORD),
+                        getVoter(TestConstants.VALID_VOTER_ID2, TestConstants.CORRECT_PASSWORD),
+                        getVoter(TestConstants.VALID_VOTER_ID3, TestConstants.CORRECT_PASSWORD),
+                        getVoter(TestConstants.VALID_VOTER_ID4, TestConstants.CORRECT_PASSWORD)
                 )
         );
 
         expectedElection.setAvailablePost(
                 Arrays.asList(
                         getPost("P0-0", 0,
-                                "Post 1 Description", Arrays.asList(VALID_VOTER_ID3)),
+                                "Post 1 Description", Arrays.asList(TestConstants.VALID_VOTER_ID3)),
                         getPost("P0-1", 1,
-                                "Post 2 Description", Arrays.asList(VALID_VOTER_ID3, VALID_VOTER_ID4))
+                                "Post 2 Description", Arrays.asList(TestConstants.VALID_VOTER_ID3, TestConstants.VALID_VOTER_ID4))
                 )
         );
 
@@ -192,13 +190,14 @@ public class NewElectionOprTest {
         new TestRunner()
                 .setNewElectionQuery(newElectionQuery)
                 .setExpectedResponse(expectedResponse)
-                .setValidVoterCredentials(VALID_VOTER_ID, CORRECT_VOTER_PASSWORD)
-                .withDBHavingTheVoter(VALID_VOTER_ID1)
-                .withDBHavingTheVoter(VALID_VOTER_ID2)
-                .withDBHavingTheVoter(VALID_VOTER_ID3)
-                .withDBHavingTheVoter(VALID_VOTER_ID4)
+                .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID1)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID2)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID3)
+                .withDBHavingTheVoter(TestConstants.VALID_VOTER_ID4)
                 .callNewElectionRequest()
-                .verifyNewElectionReponse();
+                .verifyNewElectionReponse()
+                .verifyElectionAddedInDBForTimes(1);
     }
 
     private Voter getVoter(String voterId, String voterPassword) {
@@ -318,6 +317,11 @@ public class NewElectionOprTest {
             return this;
         }
 
+        TestRunner verifyElectionAddedInDBForTimes(int times) {
+            Mockito.verify(dbPutter, times(times)).registerElection(any());
+            return this;
+        }
+
         TestRunner withDBNotHavingGivenVoterId(String voterId) {
             when((dbGetter.getVoter(voterId))).thenThrow
                     (new InvalidCredentialException("VOTER_DOES_NOT_EXISTS, VoterId: " + voterId));
@@ -327,7 +331,7 @@ public class NewElectionOprTest {
         TestRunner withDBHavingTheVoter(String voterId) {
             Voter voter = new Voter();
             voter.setVoterId(voterId);
-            voter.setVoterPassword(CORRECT_VOTER_PASSWORD);
+            voter.setVoterPassword(TestConstants.CORRECT_PASSWORD);
             voter.setVoterName(voterId);
             when(dbGetter.getVoter(voterId)).thenReturn(voter);
             return this;
