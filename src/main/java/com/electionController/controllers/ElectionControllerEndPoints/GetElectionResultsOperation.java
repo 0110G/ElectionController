@@ -3,6 +3,7 @@ package com.electionController.controllers.ElectionControllerEndPoints;
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.exceptions.InvalidCredentialException;
+import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.APIParams.GetElectionResultsQuery;
@@ -51,9 +52,9 @@ public class GetElectionResultsOperation extends ElectionController{
         try {
             authenticationFacade.validateElectionViewer(getElectionResultsQuery.getVoterId(),
                     getElectionResultsQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionResultsQuery);
-            throw new InvalidCredentialException("Not eligible to view election results");
+            throw new RestrictedActionException("Not eligible to view election results");
         }
 
         List<Post> postList = dbGetter.getElectionPosts(getElectionResultsQuery.getElectionId());

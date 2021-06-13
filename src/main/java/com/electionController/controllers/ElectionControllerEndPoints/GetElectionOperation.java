@@ -2,6 +2,7 @@ package com.electionController.controllers.ElectionControllerEndPoints;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
+import com.electionController.exceptions.EntityNotFoundException;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
@@ -43,7 +44,7 @@ public class GetElectionOperation extends ElectionController {
         try {
             authenticationFacade.validateElectionViewer(getElectionQuery.getVoterId(),
                     getElectionQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionQuery);
             throw new RestrictedActionException("Voter Ineligible to view given election");
         }
@@ -52,7 +53,7 @@ public class GetElectionOperation extends ElectionController {
         Election election = null;
         try {
             election = dbGetter.getElection(getElectionQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (EntityNotFoundException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(),
                     getElectionQuery);
             throw new InvalidCredentialException("Cannot find election");

@@ -3,6 +3,7 @@ package com.electionController.controllers.ElectionControllerEndPoints.ChangeEle
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.exceptions.InvalidCredentialException;
+import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.APIParams.ChangeElection.ChangeElectionDescriptionQuery;
 import com.electionController.structures.Response;
@@ -40,9 +41,9 @@ public class ChangeDescriptionOperation extends ChangeElectionOperation {
         try {
            authenticationFacade.validateElectionAdmin(
                    changeDescriptionQuery.getVoterId(), changeDescriptionQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), changeDescriptionQuery);
-            throw new InvalidCredentialException("User does not have rights to change the election");
+            throw new RestrictedActionException("User does not have rights to change the election");
         }
 
 

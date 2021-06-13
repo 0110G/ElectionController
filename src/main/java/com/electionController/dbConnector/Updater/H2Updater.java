@@ -1,6 +1,7 @@
 package com.electionController.dbConnector.Updater;
 
 import com.electionController.constants.ControllerOperations;
+import com.electionController.exceptions.InternalServiceException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.Election;
@@ -66,7 +67,7 @@ public class H2Updater implements DBUpdater {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId,
                     "Election: ", election);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED: updateElection");
         }
     }
 
@@ -81,7 +82,7 @@ public class H2Updater implements DBUpdater {
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED: updateElectionDescription");
         }
     }
 
@@ -96,25 +97,7 @@ public class H2Updater implements DBUpdater {
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
-        }
-    }
-
-    public void updateElection(final String electionId, final String voterId, final Election election) {
-        try {
-            jdbcTemplate.update(
-                    UPDATE_ELECTION_QUERY_SECURE,
-                    election.getElectionTitle(),
-                    election.getElectionDescription(),
-                    election.getElectionId(),
-                    election.getAdminVoterId()
-            );
-        } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_UPDATE_ELECTION, ex.getMessage(),
-                   "ElectionId:", electionId,
-                    "VoterId:", voterId,
-                    "Election: ", election);
-            throw new RestrictedActionException("Invalid Admin Entered");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED: updateElectionTitle");
         }
     }
 
@@ -129,7 +112,7 @@ public class H2Updater implements DBUpdater {
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_INCREMENT_CANDIDATE_VOTE,
                     ex.getMessage(), "PostId:", postId, "ContestantId:", contestantId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED: incrementCandidateVote");
         }
     }
 
@@ -147,7 +130,7 @@ public class H2Updater implements DBUpdater {
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_UPDATE_MARK_VOTER_VOTED_FOR_POST, ex.getMessage(),
                     "VoterId:", voterId, "ElectionId:", electionId, "VotedPosts", votedPosts);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED: markVoterVotedForPost");
         }
     }
 }

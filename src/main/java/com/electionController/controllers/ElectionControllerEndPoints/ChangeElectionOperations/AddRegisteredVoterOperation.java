@@ -2,6 +2,8 @@ package com.electionController.controllers.ElectionControllerEndPoints.ChangeEle
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.exceptions.InvalidCredentialException;
+import com.electionController.exceptions.InvalidParameterException;
+import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
 import com.electionController.helpers.ElectionControllerHelper;
 import com.electionController.logger.ConsoleLogger;
@@ -48,9 +50,9 @@ public class AddRegisteredVoterOperation extends ChangeElectionOperation {
         try {
             authenticationFacade.validateElectionAdmin(addRegisteredVoterToElectionQuery.getVoterId(),
                     addRegisteredVoterToElectionQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), addRegisteredVoterToElectionQuery);
-            throw new InvalidCredentialException("User does not have rights to change the election");
+            throw new RestrictedActionException("User does not have rights to change the election");
         }
 
         // Set of already registered
@@ -67,9 +69,9 @@ public class AddRegisteredVoterOperation extends ChangeElectionOperation {
         // Query Validation: Validate
         try {
             authenticationFacade.validateVoterIds(new ArrayList<>(distinctVoterIdsToAdd));
-        } catch (InvalidCredentialException ex) {
+        } catch (InvalidParameterException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), addRegisteredVoterToElectionQuery);
-            throw new InvalidCredentialException(ex.getErrorMessage());
+            throw new InvalidParameterException(ex.getErrorMessage());
         }
 
         electionControllerHelper.addVotersToElection(

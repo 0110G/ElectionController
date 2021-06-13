@@ -2,6 +2,10 @@ package com.electionController.exceptions;
 
 import com.electionController.constants.ResponseCodes;
 
+/*
+ * Throw when item not found in Database
+ * NOT TO BE USED FOR NON DB USECASES
+* */
 public class EntityNotFoundException extends RuntimeException {
     private String errorMessage;
     private int errorCode;

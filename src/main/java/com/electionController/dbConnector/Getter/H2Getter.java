@@ -1,6 +1,8 @@
 package com.electionController.dbConnector.Getter;
 
 import com.electionController.constants.ControllerOperations;
+import com.electionController.exceptions.EntityNotFoundException;
+import com.electionController.exceptions.InternalServiceException;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
@@ -72,11 +74,11 @@ public class H2Getter implements DBGetter {
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
                     "ElectionId: ", electionId);
-            throw new InvalidCredentialException("ELECTION_DOES_NOT_EXISTS");
+            throw new EntityNotFoundException("ELECTION_DOES_NOT_EXISTS");
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED, electionId: " + electionId);
         }
     }
 
@@ -92,11 +94,11 @@ public class H2Getter implements DBGetter {
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
-            throw new InvalidCredentialException("VOTER_DOES_NOT_EXISTS, VoterId: " + voterId);
+            throw new EntityNotFoundException("VOTER_DOES_NOT_EXISTS, VoterId: " + voterId);
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED, VoterId: " + voterId);
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED, VoterId: " + voterId);
         }
     }
 
@@ -115,12 +117,13 @@ public class H2Getter implements DBGetter {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
                     "VoterId: ", voterId,
                     "ElectionId:", electionId);
-            throw new InvalidCredentialException("VOTERMAP_ENTRY_DOES_NOT_EXIST");
+            throw new EntityNotFoundException("VOTERMAP_ENTRY_DOES_NOT_EXIST voterId: " + voterId +
+                    " electionId: " + electionId);
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
                     "VoterId: ", voterId,
                     "ElectionId:", electionId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED");
         }
     }
 
@@ -178,11 +181,11 @@ public class H2Getter implements DBGetter {
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
                     ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
-            throw new InvalidCredentialException("NOT_FOUND_POST_FOR_GIVEN_ELECTION");
+            throw new EntityNotFoundException("NOT_FOUND_POST_FOR_GIVEN_ELECTION");
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
                     ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
-            throw new RestrictedActionException("INTERNAL_ERROR_OCCURED");
+            throw new InternalServiceException("INTERNAL_ERROR_OCCURED");
         }
     }
 
@@ -217,11 +220,11 @@ public class H2Getter implements DBGetter {
         } catch (EmptyResultDataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
                     "PostId:", postId, "ContestantId:", contestantId);
-            throw new InvalidCredentialException("CANDIDATE_NOT_REGISTERED_FOR_POSTS");
+            throw new EntityNotFoundException("CANDIDATE_NOT_REGISTERED_FOR_POSTS");
         } catch (DataAccessException ex) {
             ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
                     "PostId:", postId, "ContestantId:", contestantId);
-            throw new RestrictedActionException("INTERNAL_ERROR");
+            throw new InternalServiceException("INTERNAL_ERROR");
         }
     }
 

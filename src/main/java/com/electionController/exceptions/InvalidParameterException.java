@@ -1,5 +1,9 @@
 package com.electionController.exceptions;
 
+/*
+*  Throw when incorrect parameters, while query validations
+*  ENDPOINT exception
+* */
 public class InvalidParameterException extends RuntimeException {
     private String errorMessage;
     private int errorCode;

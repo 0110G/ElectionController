@@ -54,9 +54,8 @@ public class NewElectionOperation extends ElectionController {
         // Creating a new election based on query
         Election regElection = null;
         try {
-            regElection =
-                    mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
-                    dbPutter.registerElection(regElection);
+            regElection = mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
+            dbPutter.registerElection(regElection);
         } catch (InvalidCredentialException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), newElectionQuery);
             throw new InvalidCredentialException(ex.getErrorMessage());
@@ -111,10 +110,6 @@ public class NewElectionOperation extends ElectionController {
             // TODO: GetAllVoters from db via voterIdlist [voterId]
             for (String contestantId : uniqueContestantIds) {
                 Voter v = dbGetter.getVoter(contestantId);
-//                v.setVoterPassword("****************");
-//                v.setElectionList(null)
-//                contestants.add(v);
-
                 Contestant contestant = new Contestant();
                 contestant.setVoterName(v.getVoterName());
                 contestant.setVoterPassword("************");

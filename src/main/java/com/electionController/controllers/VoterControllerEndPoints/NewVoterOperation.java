@@ -3,6 +3,7 @@ package com.electionController.controllers.VoterControllerEndPoints;
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
+import com.electionController.exceptions.InternalServiceException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.APIParams.NewVoterQuery;
@@ -22,10 +23,10 @@ public class NewVoterOperation extends ActionController {
         Voter voter = mapNewVoterQueryToVoter(newVoterQuery, Integer.toString(currentVoterId) + "00");
         try {
             dbPutter.registerVoter(voter);
-        } catch (RestrictedActionException ex) {
+        } catch (InternalServiceException ex) {
             ConsoleLogger.Log(ControllerOperations.NEW_VOTER, "Cannot create new voter",
                     newVoterQuery);
-            throw new RestrictedActionException("Error while creating voter");
+            throw new InternalServiceException("Error while creating voter");
         }
         currentVoterId++;
         return new Response.Builder()

@@ -3,6 +3,8 @@ package com.electionController.controllers.VoterControllerEndPoints;
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
+import com.electionController.exceptions.EntityNotFoundException;
+import com.electionController.exceptions.InternalServiceException;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
@@ -30,7 +32,7 @@ public class GetVoterOperation extends ActionController {
             voter = dbGetter.getVoter(getVoterQuery.getVoterId());
             if (voter == null) {
                 ConsoleLogger.Log(ACTION, "NULL_VOTER_FETCHED_FROM_DB", getVoterQuery);
-                throw new RestrictedActionException(ResponseCodes.INTERNAL_ERROR);
+                throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR);
             } else {
                 if (voter.getVoterPassword().equals(getVoterQuery.getVoterPassword())) {
                     return new Response.Builder()
@@ -39,11 +41,11 @@ public class GetVoterOperation extends ActionController {
                             .withStatusCode(ResponseCodes.SUCCESS.getResponseCode())
                             .build();
                 } else {
-                    ConsoleLogger.Log(ACTION, "INVALID_PASSWORD", getVoterQuery);
+                    ConsoleLogger.Log(ACTION, "INCORRECT_PASSWORD", getVoterQuery);
                     throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS);
                 }
             }
-        } catch (InvalidCredentialException ex) {
+        } catch (EntityNotFoundException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getVoterQuery);
             throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS);
         }

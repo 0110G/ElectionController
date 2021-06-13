@@ -6,6 +6,7 @@ import com.electionController.controllers.ElectionControllerEndPoints.ChangeElec
 import com.electionController.dbConnector.Updater.DBUpdater;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
+import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
 import com.electionController.structures.APIParams.ChangeElection.ChangeElectionTitleQuery;
 import com.electionController.structures.Response;
@@ -75,7 +76,7 @@ public class ChangeElectionTitleOprTest {
                 .callChangeElectionTitleOperation();
     }
 
-    @Test(expected = InvalidCredentialException.class)
+    @Test(expected = RestrictedActionException.class)
     public void test_shouldThrowRestrictedActionExceptionWhenInvalidElectionIdPassed() {
         ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
                 .withElectionTitle(TestConstants.ELECTION_TITLE)
@@ -91,8 +92,8 @@ public class ChangeElectionTitleOprTest {
                 .callChangeElectionTitleOperation();
     }
 
-    @Test(expected = InvalidCredentialException.class)
-    public void test_shouldThrowInvalidCredentialExceptionWhenVoterNotAdminOfGivenElection() {
+    @Test(expected = RestrictedActionException.class)
+    public void test_shouldThrowRestrictedAccessExceptionWhenVoterNotAdminOfGivenElection() {
         ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
                 .withElectionTitle(TestConstants.ELECTION_TITLE)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
@@ -190,12 +191,12 @@ public class ChangeElectionTitleOprTest {
         }
 
         TestRunner setInvalidElectionId(String electionId) {
-            doThrow(new InvalidCredentialException("")).when(authenticationFacade).validateElectionAdmin(anyString(), eq(electionId));
+            doThrow(new RestrictedActionException("")).when(authenticationFacade).validateElectionAdmin(anyString(), eq(electionId));
             return this;
         }
 
         TestRunner setElectionAdmin(String voterId, String electionId) {
-            doThrow(new InvalidCredentialException("")).when(authenticationFacade).validateElectionAdmin(anyString(), eq(electionId));
+            doThrow(new RestrictedActionException("")).when(authenticationFacade).validateElectionAdmin(anyString(), eq(electionId));
             doNothing().when(authenticationFacade).validateElectionAdmin(eq(voterId), eq(electionId));
             return this;
         }

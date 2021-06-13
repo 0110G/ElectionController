@@ -2,6 +2,7 @@ package com.electionController.controllers;
 
 import com.electionController.exceptions.EntityNotFoundException;
 import com.electionController.exceptions.InvalidCredentialException;
+import com.electionController.exceptions.InvalidParameterException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.structures.Response;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ public class ExceptionController {
     @ResponseBody
     public Response processException(EntityNotFoundException ex) {
         return new Response.Builder()
-                .withResponse(null)
+                .withResponse(EntityNotFoundException.class)
                 .withStatusCode(ex.getErrorCode())
                 .withStatus(ex.getErrorMessage())
                 .build();
@@ -29,7 +30,7 @@ public class ExceptionController {
     @ResponseBody
     public Response processException(RestrictedActionException ex) {
         return new Response.Builder()
-                .withResponse(null)
+                .withResponse(RestrictedActionException.class)
                 .withStatusCode(ex.getErrorCode())
                 .withStatus(ex.getErrorMessage())
                 .build();
@@ -40,7 +41,18 @@ public class ExceptionController {
     @ResponseBody
     public Response processException(InvalidCredentialException ex) {
         return new Response.Builder()
-                .withResponse(null)
+                .withResponse(InvalidCredentialException.class)
+                .withStatusCode(ex.getErrorCode())
+                .withStatus(ex.getErrorMessage())
+                .build();
+    }
+
+    @ExceptionHandler(InvalidParameterException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Response processException(InvalidParameterException ex) {
+        return new Response.Builder()
+                .withResponse(InvalidParameterException.class)
                 .withStatusCode(ex.getErrorCode())
                 .withStatus(ex.getErrorMessage())
                 .build();

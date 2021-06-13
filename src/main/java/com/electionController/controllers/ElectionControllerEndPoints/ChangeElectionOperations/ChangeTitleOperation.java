@@ -41,9 +41,9 @@ public class ChangeTitleOperation extends ChangeElectionOperation {
         try {
             authenticationFacade.validateElectionAdmin(changeElectionTitleQuery.getVoterId(),
                     changeElectionTitleQuery.getElectionId());
-        } catch (InvalidCredentialException ex) {
+        } catch (RestrictedActionException ex) {
             ConsoleLogger.Log(ACTION, ex.getErrorMessage(), changeElectionTitleQuery);
-            throw new InvalidCredentialException("User does not have rights to change the election");
+            throw new RestrictedActionException("User does not have rights to change the election");
         }
 
         if (changeElectionTitleQuery.getElectionTitle() == null ||
