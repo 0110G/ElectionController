@@ -1,6 +1,6 @@
 package com.electionController.controllers.voterController;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
 import com.electionController.exceptions.InternalServiceException;
@@ -20,13 +20,13 @@ import static com.electionController.controllers.electionController.ElectionCont
 @RestController
 public class VoteOperation extends ActionController<VoteQuery, Response> {
 
-    private static final ControllerOperations ACTION = ControllerOperations.VOTER_VOTE;
+    private static final ControllerOperation ACTION = ControllerOperation.VOTER_VOTE;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
     @Override
-    public ControllerOperations getControllerOperation() {
+    public ControllerOperation getControllerOperation() {
         return this.ACTION;
     }
 

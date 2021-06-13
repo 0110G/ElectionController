@@ -3,7 +3,7 @@ package com.electionController.constants;
 /*
 * Use only for logging purposes
 * */
-public enum ControllerOperations {
+public enum ControllerOperation {
     NEW_ELECTION ("ElectionController", "NewElection"),
     NEW_VOTER("VoterController", "NewVoter"),
 
@@ -44,7 +44,7 @@ public enum ControllerOperations {
     private final String baseController;
     private final String controller;
 
-    private ControllerOperations(final String baseController, final String controller) {
+    private ControllerOperation(final String baseController, final String controller) {
         this.baseController = baseController;
         this.controller = controller;
     }

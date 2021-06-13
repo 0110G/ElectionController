@@ -1,8 +1,7 @@
 package com.electionController.dbConnector.Putter;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.exceptions.InternalServiceException;
-import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.Election;
 import com.electionController.structures.VoterMap;
@@ -91,7 +90,7 @@ public class H2Putter implements DBPutter {
 
 
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_PUT_ELECTION, ex.getMessage(), election);
+            ConsoleLogger.Log(ControllerOperation.DB_PUT_ELECTION, ex.getMessage(), election);
             throw new InternalServiceException("Error While Creating Entry in Election");
         }
     }
@@ -109,7 +108,7 @@ public class H2Putter implements DBPutter {
             );
 
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTERMAP, ex.getMessage(), voterMap);
+            ConsoleLogger.Log(ControllerOperation.DB_PUT_VOTERMAP, ex.getMessage(), voterMap);
             throw new InternalServiceException("Error While Creating Entry in VOTERMAP");
         }
     }
@@ -132,7 +131,7 @@ public class H2Putter implements DBPutter {
                 registerCandidatesForPost(postMap);
             }
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_PUT_POST, ex.getMessage(), post);
+            ConsoleLogger.Log(ControllerOperation.DB_PUT_POST, ex.getMessage(), post);
             throw new InternalServiceException("Error While creating Entry in POST");
         }
     }
@@ -150,7 +149,7 @@ public class H2Putter implements DBPutter {
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.INTEGER}
             );
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_PUT_POSTMAP, ex.getMessage(), postMap);
+            ConsoleLogger.Log(ControllerOperation.DB_PUT_POSTMAP, ex.getMessage(), postMap);
             throw new InternalServiceException("Error while registering candidate for post");
         }
     }
@@ -167,7 +166,7 @@ public class H2Putter implements DBPutter {
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}
             );
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_PUT_VOTER, ex.getMessage(), voter);
+            ConsoleLogger.Log(ControllerOperation.DB_PUT_VOTER, ex.getMessage(), voter);
             throw new InternalServiceException("Error while creating new voter");
         }
     }

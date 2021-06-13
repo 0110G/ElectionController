@@ -1,6 +1,6 @@
 package com.electionController.controllers.electionController.changeElectionController;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.controllers.ActionController;
 import com.electionController.facades.AuthenticationFacade;
 import com.electionController.facades.ElectionControllerFacade;
@@ -22,7 +22,7 @@ import static com.electionController.controllers.electionController.ElectionCont
 @RestController
 public class AddRegisteredVoterOperation extends ActionController<AddRegisteredVoterToElectionQuery, Response> {
 
-    private static final ControllerOperations ACTION = ControllerOperations.CHANGE_ELECTION_ADD_VOTERS;
+    private static final ControllerOperation ACTION = ControllerOperation.CHANGE_ELECTION_ADD_VOTERS;
 
     @Autowired
     private ElectionControllerFacade electionControllerFacade;
@@ -31,7 +31,7 @@ public class AddRegisteredVoterOperation extends ActionController<AddRegisteredV
     private AuthenticationFacade authenticationFacade;
 
     @Override
-    public ControllerOperations getControllerOperation() {
+    public ControllerOperation getControllerOperation() {
         return this.ACTION;
     }
 

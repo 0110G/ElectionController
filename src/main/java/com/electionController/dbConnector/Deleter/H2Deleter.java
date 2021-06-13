@@ -1,8 +1,7 @@
 package com.electionController.dbConnector.Deleter;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.exceptions.InternalServiceException;
-import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +30,7 @@ public class H2Deleter implements DBDeletor {
                     voterId, electionId
             );
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_DELETE_VOTER_FROM_ELECTION,
+            ConsoleLogger.Log(ControllerOperation.DB_DELETE_VOTER_FROM_ELECTION,
                     ex.getMessage(),
                     "VoterId:", voterId,
                     "ElectionId", electionId);
@@ -46,7 +45,7 @@ public class H2Deleter implements DBDeletor {
                     postId, candidateId
             );
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_DELETE_CANDIDATE_FROM_POST,
+            ConsoleLogger.Log(ControllerOperation.DB_DELETE_CANDIDATE_FROM_POST,
                     ex.getMessage(), "PostId:", postId, "VoterID:", candidateId);
             throw new InternalServiceException("Cannot delete entry");
         }

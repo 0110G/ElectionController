@@ -1,6 +1,6 @@
 package com.electionController.controllers;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.dbConnector.Putter.DBPutter;
 import com.electionController.dbConnector.Updater.DBUpdater;
@@ -23,7 +23,7 @@ public abstract class ActionController<Query, Response> {
     @Autowired
     protected DBUpdater dbUpdater;
 
-    public abstract  ControllerOperations getControllerOperation();
+    public abstract ControllerOperation getControllerOperation();
 
     public abstract Response executeAction(final Query query);
 

@@ -1,6 +1,6 @@
 package com.electionController.controllers.electionController;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
 import com.electionController.structures.Election;
@@ -27,13 +27,13 @@ public class NewElectionOperation extends ActionController<NewElectionQuery, Res
 
     private static int currentId = 0;
 
-    private static final ControllerOperations ACTION = ControllerOperations.NEW_ELECTION;
+    private static final ControllerOperation ACTION = ControllerOperation.NEW_ELECTION;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
     @Override
-    public ControllerOperations getControllerOperation() {
+    public ControllerOperation getControllerOperation() {
         return this.ACTION;
     }
 

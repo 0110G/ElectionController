@@ -1,6 +1,6 @@
 package com.electionController.logger;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 
 /*
 * Logs a message on the console
@@ -12,7 +12,7 @@ public class ConsoleLogger {
         System.out.println(logMessage);
     }
 
-    public static void Log(final ControllerOperations controllerOperation, final String message, final Object... params) {
+    public static void Log(final ControllerOperation controllerOperation, final String message, final Object... params) {
         StringBuilder logMessage = new StringBuilder("[LOGGER] " +
                 "[" + controllerOperation.getBaseController() + "::" + controllerOperation.getController() + "] " +
                 message + " [Params]: ");

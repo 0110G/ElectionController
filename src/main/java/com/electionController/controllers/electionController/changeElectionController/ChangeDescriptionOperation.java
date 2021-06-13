@@ -1,6 +1,6 @@
 package com.electionController.controllers.electionController.changeElectionController;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
 import com.electionController.structures.APIParams.ChangeElection.ChangeElectionDescriptionQuery;
@@ -16,13 +16,13 @@ import static com.electionController.controllers.electionController.ElectionCont
 @RestController
 public class ChangeDescriptionOperation extends ActionController<ChangeElectionDescriptionQuery, Response> {
 
-    private static final ControllerOperations ACTION = ControllerOperations.CHANGE_ELECTION_DESCRIPTION;
+    private static final ControllerOperation ACTION = ControllerOperation.CHANGE_ELECTION_DESCRIPTION;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
     @Override
-    public ControllerOperations getControllerOperation() {
+    public ControllerOperation getControllerOperation() {
         return this.ACTION;
     }
 

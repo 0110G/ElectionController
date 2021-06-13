@@ -1,6 +1,6 @@
 package com.electionController.controllers.voterController;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.controllers.ActionController;
 import com.electionController.structures.APIParams.NewVoterQuery;
@@ -17,10 +17,10 @@ public class NewVoterOperation extends ActionController<NewVoterQuery, Response>
 
     static int currentVoterId = 0;
 
-    private static final ControllerOperations ACTION = ControllerOperations.NEW_VOTER;
+    private static final ControllerOperation ACTION = ControllerOperation.NEW_VOTER;
 
     @Override
-    public ControllerOperations getControllerOperation() {
+    public ControllerOperation getControllerOperation() {
         return this.ACTION;
     }
 

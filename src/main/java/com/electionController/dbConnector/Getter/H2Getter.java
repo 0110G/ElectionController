@@ -1,10 +1,8 @@
 package com.electionController.dbConnector.Getter;
 
-import com.electionController.constants.ControllerOperations;
+import com.electionController.constants.ControllerOperation;
 import com.electionController.exceptions.EntityNotFoundException;
 import com.electionController.exceptions.InternalServiceException;
-import com.electionController.exceptions.InvalidCredentialException;
-import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.Election;
 import com.electionController.structures.Post;
@@ -72,11 +70,11 @@ public class H2Getter implements DBGetter {
             election.setAvailablePost(getElectionPosts(electionId));
             return election;
         } catch (EmptyResultDataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION, ex.getMessage(),
                     "ElectionId: ", electionId);
             throw new EntityNotFoundException("ELECTION_DOES_NOT_EXISTS");
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION, ex.getMessage(),
                     "ElectionId:", electionId);
             throw new InternalServiceException("INTERNAL_ERROR_OCCURED, electionId: " + electionId);
         }
@@ -92,11 +90,11 @@ public class H2Getter implements DBGetter {
                     voterId);
             return voter;
         } catch (EmptyResultDataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
             throw new EntityNotFoundException("VOTER_DOES_NOT_EXISTS, VoterId: " + voterId);
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTER, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_VOTER, ex.getMessage(),
                     "VoterId: ", voterId);
             throw new InternalServiceException("INTERNAL_ERROR_OCCURED, VoterId: " + voterId);
         }
@@ -114,13 +112,13 @@ public class H2Getter implements DBGetter {
             );
             return voterMap;
         } catch (EmptyResultDataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_VOTERMAP, ex.getMessage(),
                     "VoterId: ", voterId,
                     "ElectionId:", electionId);
             throw new EntityNotFoundException("VOTERMAP_ENTRY_DOES_NOT_EXIST voterId: " + voterId +
                     " electionId: " + electionId);
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_VOTERMAP, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_VOTERMAP, ex.getMessage(),
                     "VoterId: ", voterId,
                     "ElectionId:", electionId);
             throw new InternalServiceException("INTERNAL_ERROR_OCCURED");
@@ -138,7 +136,7 @@ public class H2Getter implements DBGetter {
             );
             return registeredVoters;
         } catch (DataAccessException ignored) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_VOTERS, ignored.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION_VOTERS, ignored.getMessage(),
                     "ElectionId:", electionId);
             return registeredVoters;
         }
@@ -158,7 +156,7 @@ public class H2Getter implements DBGetter {
             }
             return registeredPosts;
         } catch (DataAccessException ignored) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POSTS, ignored.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION_POSTS, ignored.getMessage(),
                     "ElectionId:", electionId);
             return new ArrayList<Post>();
         }
@@ -179,11 +177,11 @@ public class H2Getter implements DBGetter {
             }
             return post;
         } catch (EmptyResultDataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION_POST,
                     ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
             throw new EntityNotFoundException("NOT_FOUND_POST_FOR_GIVEN_ELECTION");
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_ELECTION_POST,
+            ConsoleLogger.Log(ControllerOperation.DB_GET_ELECTION_POST,
                     ex.getMessage(), "ElectionId:", electionId, "PostId:", postId);
             throw new InternalServiceException("INTERNAL_ERROR_OCCURED");
         }
@@ -200,7 +198,7 @@ public class H2Getter implements DBGetter {
             );
             return registeredCandidates;
         } catch (DataAccessException ignored) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATES, ignored.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_POST_CANDIDATES, ignored.getMessage(),
                     "PostId:", postId);
             return new ArrayList<Contestant>();
         }
@@ -218,11 +216,11 @@ public class H2Getter implements DBGetter {
             );
             return contestant;
         } catch (EmptyResultDataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_POST_CANDIDATE, ex.getMessage(),
                     "PostId:", postId, "ContestantId:", contestantId);
             throw new EntityNotFoundException("CANDIDATE_NOT_REGISTERED_FOR_POSTS");
         } catch (DataAccessException ex) {
-            ConsoleLogger.Log(ControllerOperations.DB_GET_POST_CANDIDATE, ex.getMessage(),
+            ConsoleLogger.Log(ControllerOperation.DB_GET_POST_CANDIDATE, ex.getMessage(),
                     "PostId:", postId, "ContestantId:", contestantId);
             throw new InternalServiceException("INTERNAL_ERROR");
         }
