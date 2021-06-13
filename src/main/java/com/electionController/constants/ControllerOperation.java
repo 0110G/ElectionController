@@ -39,7 +39,9 @@ public enum ControllerOperation {
     DB_UPDATE_MARK_VOTER_VOTED_FOR_POST("DatabaseConnector", "MarkVoted"),
 
     DB_DELETE_VOTER_FROM_ELECTION("DatabaseConnector", "DeleteVoterFromElection"),
-    DB_DELETE_CANDIDATE_FROM_POST("DatabaseConnector", "DeleteCandidateFromPost");
+    DB_DELETE_CANDIDATE_FROM_POST("DatabaseConnector", "DeleteCandidateFromPost"),
+
+    PING("TestConnector", "Ping");
 
     private final String baseController;
     private final String controller;
@@ -56,5 +58,4 @@ public enum ControllerOperation {
     public String getController() {
         return this.controller;
     }
-
 }
