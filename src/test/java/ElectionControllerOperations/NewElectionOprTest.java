@@ -2,7 +2,7 @@ package ElectionControllerOperations;
 
 import com.electionController.constants.ResponseCodes;
 import com.electionController.constants.TestConstants;
-import com.electionController.controllers.ElectionControllerEndPoints.NewElectionOperation;
+import com.electionController.controllers.electionController.NewElectionOperation;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.dbConnector.Putter.DBPutter;
 import com.electionController.exceptions.InvalidCredentialException;
@@ -272,7 +272,7 @@ public class NewElectionOprTest {
         }
 
         TestRunner callNewElectionRequest() {
-            this.actualResponse = newElectionOperation.CreateElection(this.newElectionQuery);
+            this.actualResponse = newElectionOperation.createElection(this.newElectionQuery);
             return this;
         }
 

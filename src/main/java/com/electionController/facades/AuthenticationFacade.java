@@ -51,7 +51,7 @@ public class AuthenticationFacade {
             try {
                 dbGetter.getVoter(voterId);
             } catch (EntityNotFoundException ex) {
-                throw new InvalidParameterException("INVALID_VOTER_ID" + voterId);
+                throw new InvalidParameterException("INVALID_VOTER_ID voterId:" + voterId);
             }
         }
     }
@@ -92,7 +92,8 @@ public class AuthenticationFacade {
         try {
             VoterMap voterMap = dbGetter.getVoterMap(voterId, electionId);
             if (voterMap == null) {
-                throw new InternalServiceException("NULL_VOTER_MAP_RETURNED, voterId:" + voterId);
+                throw new InternalServiceException("NULL_VOTER_MAP_RETURNED, voterId:" + voterId + " electionId:"
+                    + electionId);
             }
         } catch (EntityNotFoundException ex) {
             throw new RestrictedActionException("VOTER_NOT_BELONG_TO_ELECTION voterId:" + voterId + " electionId:" +

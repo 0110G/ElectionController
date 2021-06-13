@@ -1,12 +1,9 @@
-package com.electionController.controllers.ElectionControllerEndPoints;
+package com.electionController.controllers.electionController;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
-import com.electionController.exceptions.EntityNotFoundException;
-import com.electionController.exceptions.InvalidCredentialException;
-import com.electionController.exceptions.RestrictedActionException;
+import com.electionController.controllers.ActionController;
 import com.electionController.facades.AuthenticationFacade;
-import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.Election;
 import com.electionController.structures.Voter;
 import com.electionController.structures.Contestant;
@@ -20,58 +17,53 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+
 @RestController
-public class GetElectionOperation extends ElectionController {
+public class GetElectionOperation extends ActionController<GetElectionQuery, Response> {
 
     private static final ControllerOperations ACTION = ControllerOperations.GET_ELECTION;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
+    @Override
+    public ControllerOperations getControllerOperation() {
+        return this.ACTION;
+    }
+
+    @Override
     @GetMapping("/GetElection")
-    public Response GetElection(@RequestBody GetElectionQuery getElectionQuery) {
+    public Response execute(@RequestBody GetElectionQuery getElectionQuery) {
+        return super.execute(getElectionQuery);
+    }
 
+    @Override
+    public Response executeAction(final GetElectionQuery getElectionQuery) {
+        return this.getElection(getElectionQuery);
+    }
+
+    @Override
+    public void validateActionAccess(final GetElectionQuery getElectionQuery) {
         ValidateNotNull(getElectionQuery);
+        authenticationFacade.validateVoterCredentials(getElectionQuery.getVoterId(),
+                getElectionQuery.getVoterPassword());
+        authenticationFacade.validateElectionViewer(getElectionQuery.getVoterId(),
+                getElectionQuery.getElectionId());
+    }
 
-        try {
-            authenticationFacade.validateVoterCredentials(getElectionQuery.getVoterId(),
-                    getElectionQuery.getVoterPassword());
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionQuery);
-            throw new InvalidCredentialException("Invalid Username/Password");
-        }
-
-        try {
-            authenticationFacade.validateElectionViewer(getElectionQuery.getVoterId(),
-                    getElectionQuery.getElectionId());
-        } catch (RestrictedActionException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionQuery);
-            throw new RestrictedActionException("Voter Ineligible to view given election");
-        }
-
-        // This is not required
-        Election election = null;
-        try {
-            election = dbGetter.getElection(getElectionQuery.getElectionId());
-        } catch (EntityNotFoundException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(),
-                    getElectionQuery);
-            throw new InvalidCredentialException("Cannot find election");
-        }
-
+    public Response getElection(final GetElectionQuery getElectionQuery) {
+        Election election = dbGetter.getElection(getElectionQuery.getElectionId());;
         assert election != null;
-
         election.setEligibleVoters((List<Voter>) maskVoterPassword(election.getEligibleVoters()));
         for (Post post : election.getAvailablePost()) {
             post.setContestants((List<Contestant>) maskVoterPassword(post.getContestants()));
         }
-
         return new Response.Builder()
                 .withResponse(election)
                 .withStatusCode(ResponseCodes.SUCCESS.getResponseCode())
                 .withStatus(ResponseCodes.SUCCESS.getResponse())
                 .build();
-
     }
 
     private List<? extends Voter> maskVoterPassword(List<? extends Voter> unmaskedVoters) {

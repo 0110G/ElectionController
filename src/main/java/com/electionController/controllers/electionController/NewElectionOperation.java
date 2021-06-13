@@ -1,9 +1,8 @@
-package com.electionController.controllers.ElectionControllerEndPoints;
+package com.electionController.controllers.electionController;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
-import com.electionController.exceptions.InvalidCredentialException;
-import com.electionController.logger.ConsoleLogger;
+import com.electionController.controllers.ActionController;
 import com.electionController.structures.Election;
 import com.electionController.structures.Voter;
 import com.electionController.structures.Contestant;
@@ -20,8 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+import static com.electionController.controllers.electionController.ElectionController.getValueOrDefault;
+
 @RestController
-public class NewElectionOperation extends ElectionController {
+public class NewElectionOperation extends ActionController<NewElectionQuery, Response> {
 
     private static int currentId = 0;
 
@@ -30,39 +32,33 @@ public class NewElectionOperation extends ElectionController {
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
-    /** CreateElection takes
-     * @param  newElectionQuery
-     * and creates and returns an election
-     * with given voter as admin for that election
-     **/
+    @Override
+    public ControllerOperations getControllerOperation() {
+        return this.ACTION;
+    }
+
+    @Override
     @PostMapping("/NewElection")
-    public Response CreateElection(@RequestBody NewElectionQuery newElectionQuery) {
+    public Response execute(@RequestBody NewElectionQuery newElectionQuery) {
+        return super.execute(newElectionQuery);
+    }
 
-        // Body contains Valid Parameters
+    @Override
+    public Response executeAction(final NewElectionQuery newElectionQuery) {
+        return this.createElection(newElectionQuery);
+    }
+
+    @Override
+    public void validateActionAccess(final NewElectionQuery newElectionQuery) {
         ValidateNotNull(newElectionQuery);
+        authenticationFacade.validateVoterCredentials(newElectionQuery.getVoterId(),
+                newElectionQuery.getVoterPassword());
+    }
 
-        // Voter tries to authenticate himself
-        try {
-            authenticationFacade.validateVoterCredentials(newElectionQuery.getVoterId(),
-                    newElectionQuery.getVoterPassword());
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(),
-                    newElectionQuery);
-            throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS);
-        }
-
-        // Creating a new election based on query
-        Election regElection = null;
-        try {
-            regElection = mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
-            dbPutter.registerElection(regElection);
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), newElectionQuery);
-            throw new InvalidCredentialException(ex.getErrorMessage());
-        }
-
+    public Response createElection(final NewElectionQuery newElectionQuery) {
+        Election regElection = mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
+        dbPutter.registerElection(regElection);
         currentId++;
-
         return new Response.Builder()
                 .withResponse(regElection)
                 .withStatus(ResponseCodes.SUCCESS.getResponse())
@@ -126,7 +122,6 @@ public class NewElectionOperation extends ElectionController {
         regElection.setAvailablePost(availablePosts);
         return regElection;
     }
-
 
     private boolean postWorthRegistering(final NewElectionQuery.Post post) {
         return post != null &&

@@ -1,26 +1,24 @@
-package com.electionController.controllers.ElectionControllerEndPoints.ChangeElectionOperations;
+package com.electionController.controllers.electionController.changeElectionController;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
-import com.electionController.exceptions.InvalidCredentialException;
-import com.electionController.exceptions.RestrictedActionException;
+import com.electionController.controllers.ActionController;
 import com.electionController.facades.AuthenticationFacade;
-import com.electionController.helpers.ElectionControllerHelper;
-import com.electionController.logger.ConsoleLogger;
+import com.electionController.facades.ElectionControllerFacade;
 import com.electionController.structures.APIParams.ChangeElection.DeleteRegisteredVoterFromElectionQuery;
-import com.electionController.structures.Election;
 import com.electionController.structures.Response;
-import com.electionController.structures.Voter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+
 /** DeleteRegisteredVoter API deletes specified voters from the specified election
 * @author : bhavya saraf
 */
 @RestController
-public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
+public class DeleteRegisteredVoterOperation extends ActionController<DeleteRegisteredVoterFromElectionQuery, Response> {
 
     private static final ControllerOperations ACTION = ControllerOperations.CHANGE_ELECTION_DELETE_VOTERS;
 
@@ -28,7 +26,32 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
     private AuthenticationFacade authenticationFacade;
 
     @Autowired
-    private ElectionControllerHelper electionControllerHelper;
+    private ElectionControllerFacade electionControllerFacade;
+
+    @Override
+    public ControllerOperations getControllerOperation() {
+        return this.ACTION;
+    }
+
+    @Override
+    @DeleteMapping("/ChangeElection/DeleteVoters")
+    public Response execute(@RequestBody DeleteRegisteredVoterFromElectionQuery deleteRegisteredVoterQuery) {
+        return super.execute(deleteRegisteredVoterQuery);
+    }
+
+    @Override
+    public Response executeAction(final DeleteRegisteredVoterFromElectionQuery deleteRegisteredVoterQuery) {
+        return this.deleteRegisteredVotersFromElection(deleteRegisteredVoterQuery);
+    }
+
+    @Override
+    public void validateActionAccess(final DeleteRegisteredVoterFromElectionQuery deleteRegisteredVoterQuery) {
+        ValidateNotNull(deleteRegisteredVoterQuery);
+        authenticationFacade.validateVoterCredentials(deleteRegisteredVoterQuery.getVoterId(),
+                deleteRegisteredVoterQuery.getVoterPassword());
+        authenticationFacade.validateElectionAdmin(deleteRegisteredVoterQuery.getVoterId(),
+                deleteRegisteredVoterQuery.getElectionId());
+    }
 
     /*
     *  1. Only admin can delete some participant
@@ -43,29 +66,9 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
     *                   If the exists a given voter, remove it
     *
     * */
-
-    @DeleteMapping("/ChangeElection/DeleteVoters")
-    public Response DeleteRegisteredVotersFromElection(@RequestBody DeleteRegisteredVoterFromElectionQuery
+    public Response deleteRegisteredVotersFromElection(final DeleteRegisteredVoterFromElectionQuery
                                                        deleteRegisteredVoterFromElectionQuery) {
-        ValidateNotNull(deleteRegisteredVoterFromElectionQuery);
-
-        try {
-            authenticationFacade.validateVoterCredentials(deleteRegisteredVoterFromElectionQuery.getVoterId(),
-                    deleteRegisteredVoterFromElectionQuery.getVoterPassword());
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), deleteRegisteredVoterFromElectionQuery);
-            throw new InvalidCredentialException("Invalid Username/Password");
-        }
-
-        try {
-            authenticationFacade.validateElectionAdmin(deleteRegisteredVoterFromElectionQuery.getVoterId(),
-                    deleteRegisteredVoterFromElectionQuery.getElectionId());
-        } catch (RestrictedActionException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), deleteRegisteredVoterFromElectionQuery);
-            throw new RestrictedActionException("User does not have rights to change the election");
-        }
-
-        electionControllerHelper.deleteVotersFromElection(deleteRegisteredVoterFromElectionQuery.getVotersToDelete(),
+        electionControllerFacade.deleteVotersFromElection(deleteRegisteredVoterFromElectionQuery.getVotersToDelete(),
                 deleteRegisteredVoterFromElectionQuery.getElectionId(),
                 deleteRegisteredVoterFromElectionQuery.getVoterId(),
                 deleteRegisteredVoterFromElectionQuery.getForceDelete());
@@ -76,6 +79,4 @@ public class DeleteRegisteredVoterOperation extends ChangeElectionOperation {
                 .withResponse(null)
                 .build();
     }
-
-
 }

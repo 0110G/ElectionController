@@ -1,4 +1,4 @@
-package com.electionController.controllers.VoterControllerEndPoints;
+package com.electionController.controllers.voterController;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
@@ -8,7 +8,6 @@ import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
-import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.APIParams.VoteQuery;
 import com.electionController.structures.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +15,42 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+
 @RestController
-public class VoteOperation extends ActionController {
+public class VoteOperation extends ActionController<VoteQuery, Response> {
 
     private static final ControllerOperations ACTION = ControllerOperations.VOTER_VOTE;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
-   /**
+    @Override
+    public ControllerOperations getControllerOperation() {
+        return this.ACTION;
+    }
+
+    @Override
+    @PostMapping("/Vote")
+    public Response execute(@RequestBody VoteQuery voteQuery) {
+        return super.execute(voteQuery);
+    }
+
+    @Override
+    public Response executeAction(VoteQuery voteQuery) {
+        return this.vote(voteQuery);
+    }
+
+    @Override
+    public void validateActionAccess(final VoteQuery voteQuery) {
+        ValidateNotNull(voteQuery);
+        authenticationFacade.validateVoterCredentials(voteQuery.getVoterId(), voteQuery.getVoterPassword());
+        authenticationFacade.validateElectionViewer(voteQuery.getVoterId(), voteQuery.getElectionId());
+        authenticationFacade.validateElectionPost(voteQuery.getElectionId(), voteQuery.getPostId());
+        authenticationFacade.validateCandidatePost(voteQuery.getPostId(), voteQuery.getCandidateId());
+    }
+
+    /**
     * Vote allows a voter to caste his/her voter for a particular candidate stading on a particular post.
     * A voter can vote only once for a given post. The choice of voter is not logged and is secretive.
     *
@@ -45,43 +71,11 @@ public class VoteOperation extends ActionController {
     *                                         when voter is not elligible to vote for given post
     * @exception  InternalServiceException - on unexpected service failures
     * */
-    @PostMapping("/Vote")
-    public Response Vote(@RequestBody VoteQuery voteQuery) {
-        try {
-            authenticationFacade.validateVoterCredentials(voteQuery.getVoterId(), voteQuery.getVoterPassword());
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), voteQuery);
-            throw new InvalidCredentialException("Invalid Username/Password");
-        }
-
-        try {
-            authenticationFacade.validateElectionViewer(voteQuery.getVoterId(), voteQuery.getElectionId());
-        } catch (RestrictedActionException ex) {
-            throw new RestrictedActionException("Not eligible to vote for election");
-        }
-
-        try {
-            authenticationFacade.validateElectionPost(voteQuery.getElectionId(), voteQuery.getPostId());
-        } catch (InvalidParameterException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), voteQuery);
-            throw new InvalidParameterException("Invalid Election/Post");
-        }
-
-        try {
-            authenticationFacade.validateCandidatePost(voteQuery.getPostId(), voteQuery.getCandidateId());
-        } catch (InvalidParameterException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), voteQuery);
-            throw new InvalidParameterException("Invalid Post/Candidate");
-        }
-
+    private Response vote(final VoteQuery voteQuery) {
         String voted = dbGetter.getVoterMap(voteQuery.getVoterId(), voteQuery.getElectionId()).getHasVoted();
-
         if(!checkIfVoterEligibleToVoteForGivenPostFromVotedString(voted, voteQuery.getPostId())) {
-            ConsoleLogger.Log(ACTION, "ALREADY_VOTED", voted);
             throw new RestrictedActionException("ALREADY_VOTED_FOR_POST");
         }
-
-        // Add entry to POSTMAP
         dbUpdater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
         dbUpdater.markVoterVotedForPost(voteQuery.getVoterId(), voteQuery.getElectionId(),
                 getVotedString(voted, getPostIndexFromPostId(voteQuery.getPostId())));
@@ -116,6 +110,4 @@ public class VoteOperation extends ActionController {
         }
         return Integer.parseInt(tokens[1]);
     }
-
-
 }

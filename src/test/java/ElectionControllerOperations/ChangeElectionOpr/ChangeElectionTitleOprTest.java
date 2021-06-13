@@ -2,7 +2,7 @@ package ElectionControllerOperations.ChangeElectionOpr;
 
 import com.electionController.constants.ResponseCodes;
 import com.electionController.constants.TestConstants;
-import com.electionController.controllers.ElectionControllerEndPoints.ChangeElectionOperations.ChangeTitleOperation;
+import com.electionController.controllers.electionController.changeElectionController.ChangeTitleOperation;
 import com.electionController.dbConnector.Updater.DBUpdater;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
@@ -214,7 +214,7 @@ public class ChangeElectionTitleOprTest {
         }
 
         TestRunner callChangeElectionTitleOperation() {
-            this.actualResponse = changeTitleOperation.ChangeElectionTitle(this.changeElectionTitleQuery);
+            this.actualResponse = changeTitleOperation.changeElectionTitle(this.changeElectionTitleQuery);
             return this;
         }
     }

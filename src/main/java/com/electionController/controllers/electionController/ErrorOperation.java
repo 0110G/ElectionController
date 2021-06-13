@@ -1,4 +1,4 @@
-package com.electionController.controllers.ElectionControllerEndPoints;
+package com.electionController.controllers.electionController;
 
 import com.electionController.structures.Response;
 import org.springframework.web.bind.annotation.GetMapping;

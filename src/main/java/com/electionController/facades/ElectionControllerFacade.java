@@ -1,4 +1,4 @@
-package com.electionController.helpers;
+package com.electionController.facades;
 
 import com.electionController.dbConnector.Deleter.DBDeletor;
 import com.electionController.dbConnector.Getter.DBGetter;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-public class ElectionControllerHelper {
+public class ElectionControllerFacade {
 
     @Autowired
     private DBPutter dbPutter;

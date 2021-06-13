@@ -2,7 +2,7 @@ package ElectionControllerOperations;
 
 import com.electionController.constants.ResponseCodes;
 import com.electionController.constants.TestConstants;
-import com.electionController.controllers.ElectionControllerEndPoints.GetElectionOperation;
+import com.electionController.controllers.electionController.GetElectionOperation;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
@@ -150,7 +150,7 @@ public class GetElectionOprTest {
         }
 
         TestRunner callGetElectionOperation() {
-            this.actualResponse = getElectionOperation.GetElection(this.getElectionQuery);
+            this.actualResponse = getElectionOperation.getElection(this.getElectionQuery);
             return this;
         }
 

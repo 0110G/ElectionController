@@ -1,11 +1,9 @@
-package com.electionController.controllers.ElectionControllerEndPoints;
+package com.electionController.controllers.electionController;
 
 import com.electionController.constants.ControllerOperations;
 import com.electionController.constants.ResponseCodes;
-import com.electionController.exceptions.InvalidCredentialException;
-import com.electionController.exceptions.RestrictedActionException;
+import com.electionController.controllers.ActionController;
 import com.electionController.facades.AuthenticationFacade;
-import com.electionController.logger.ConsoleLogger;
 import com.electionController.structures.APIParams.GetElectionResultsQuery;
 import com.electionController.structures.Contestant;
 import com.electionController.structures.ElectionResults;
@@ -20,43 +18,42 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+
 @RestController
-public class GetElectionResultsOperation extends ElectionController{
+public class GetElectionResultsOperation extends ActionController<GetElectionResultsQuery, Response> {
 
-
-    // Returns the result of the election
-    /**
-     * @Params: GetElectionResultsQuery
-     *  @Required: voterId
-     *  @Required: voterPassword
-     *  @Required: election
-     */
     private static final ControllerOperations ACTION = ControllerOperations.GET_ELECTION_RESULTS;
 
     @Autowired
     private AuthenticationFacade authenticationFacade;
 
+    @Override
+    public ControllerOperations getControllerOperation() {
+        return this.ACTION;
+    }
+
+    @Override
     @GetMapping("/GetResults")
-    public Response GetResults(@RequestBody GetElectionResultsQuery getElectionResultsQuery) {
+    public Response execute(@RequestBody GetElectionResultsQuery getElectionResultsQuery) {
+        return super.execute(getElectionResultsQuery);
+    }
 
+    @Override
+    public Response executeAction(final GetElectionResultsQuery getElectionResultsQuery) {
+        return this.getResults(getElectionResultsQuery);
+    }
+
+    @Override
+    public void validateActionAccess(final GetElectionResultsQuery getElectionResultsQuery) {
         ValidateNotNull(getElectionResultsQuery);
+        authenticationFacade.validateVoterCredentials(getElectionResultsQuery.getVoterId(),
+                getElectionResultsQuery.getVoterPassword());
+        authenticationFacade.validateElectionViewer(getElectionResultsQuery.getVoterId(),
+                getElectionResultsQuery.getElectionId());
+    }
 
-        try {
-            authenticationFacade.validateVoterCredentials(getElectionResultsQuery.getVoterId(),
-                    getElectionResultsQuery.getVoterPassword());
-        } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionResultsQuery);
-            throw new InvalidCredentialException("Invalid Username/Password");
-        }
-
-        try {
-            authenticationFacade.validateElectionViewer(getElectionResultsQuery.getVoterId(),
-                    getElectionResultsQuery.getElectionId());
-        } catch (RestrictedActionException ex) {
-            ConsoleLogger.Log(ACTION, ex.getErrorMessage(), getElectionResultsQuery);
-            throw new RestrictedActionException("Not eligible to view election results");
-        }
-
+    public Response getResults(final GetElectionResultsQuery getElectionResultsQuery) {
         List<Post> postList = dbGetter.getElectionPosts(getElectionResultsQuery.getElectionId());
         ElectionResults electionResults = mapPostsToElectionResults(postList,
                 getElectionResultsQuery.getElectionId());
@@ -121,5 +118,4 @@ public class GetElectionResultsOperation extends ElectionController{
             }
         }
     }
-
 }
