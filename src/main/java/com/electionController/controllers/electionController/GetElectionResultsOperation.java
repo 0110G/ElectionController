@@ -40,7 +40,7 @@ public class GetElectionResultsOperation extends ActionController<GetElectionRes
     }
 
     @Override
-    public Response executeAction(final GetElectionResultsQuery getElectionResultsQuery) {
+    protected Response executeAction(final GetElectionResultsQuery getElectionResultsQuery) {
         return this.getResults(getElectionResultsQuery);
     }
 
@@ -53,7 +53,7 @@ public class GetElectionResultsOperation extends ActionController<GetElectionRes
                 getElectionResultsQuery.getElectionId());
     }
 
-    public Response getResults(final GetElectionResultsQuery getElectionResultsQuery) {
+    private Response getResults(final GetElectionResultsQuery getElectionResultsQuery) {
         List<Post> postList = dbGetter.getElectionPosts(getElectionResultsQuery.getElectionId());
         ElectionResults electionResults = mapPostsToElectionResults(postList,
                 getElectionResultsQuery.getElectionId());

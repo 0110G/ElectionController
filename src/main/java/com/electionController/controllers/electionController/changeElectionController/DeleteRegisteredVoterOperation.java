@@ -40,7 +40,7 @@ public class DeleteRegisteredVoterOperation extends ActionController<DeleteRegis
     }
 
     @Override
-    public Response executeAction(final DeleteRegisteredVoterFromElectionQuery deleteRegisteredVoterQuery) {
+    protected Response executeAction(final DeleteRegisteredVoterFromElectionQuery deleteRegisteredVoterQuery) {
         return this.deleteRegisteredVotersFromElection(deleteRegisteredVoterQuery);
     }
 
@@ -53,20 +53,7 @@ public class DeleteRegisteredVoterOperation extends ActionController<DeleteRegis
                 deleteRegisteredVoterQuery.getElectionId());
     }
 
-    /*
-    *  1. Only admin can delete some participant
-    *  2. For a given voter, following cases present
-    *       2a. VoterId is invalid => ignore
-    *       2b. VoterId is valid but not a part of election => ignore
-    *       2c. VoterId is part of election
-    *           if admin, ignore
-    *           Remove from voterMap
-    *           2c1. VoterId is a candidate in one or many posts
-    *               For all posts in an election,
-    *                   If the exists a given voter, remove it
-    *
-    * */
-    public Response deleteRegisteredVotersFromElection(final DeleteRegisteredVoterFromElectionQuery
+    private Response deleteRegisteredVotersFromElection(final DeleteRegisteredVoterFromElectionQuery
                                                        deleteRegisteredVoterFromElectionQuery) {
         electionControllerFacade.deleteVotersFromElection(deleteRegisteredVoterFromElectionQuery.getVotersToDelete(),
                 deleteRegisteredVoterFromElectionQuery.getElectionId(),

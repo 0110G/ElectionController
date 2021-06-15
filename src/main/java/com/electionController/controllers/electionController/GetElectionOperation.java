@@ -39,7 +39,7 @@ public class GetElectionOperation extends ActionController<GetElectionQuery, Res
     }
 
     @Override
-    public Response executeAction(final GetElectionQuery getElectionQuery) {
+    protected Response executeAction(final GetElectionQuery getElectionQuery) {
         return this.getElection(getElectionQuery);
     }
 
@@ -52,7 +52,7 @@ public class GetElectionOperation extends ActionController<GetElectionQuery, Res
                 getElectionQuery.getElectionId());
     }
 
-    public Response getElection(final GetElectionQuery getElectionQuery) {
+    private Response getElection(final GetElectionQuery getElectionQuery) {
         Election election = dbGetter.getElection(getElectionQuery.getElectionId());;
         assert election != null;
         election.setEligibleVoters((List<Voter>) maskVoterPassword(election.getEligibleVoters()));

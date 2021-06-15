@@ -150,7 +150,7 @@ public class GetElectionOprTest {
         }
 
         TestRunner callGetElectionOperation() {
-            this.actualResponse = getElectionOperation.getElection(this.getElectionQuery);
+            this.actualResponse = getElectionOperation.execute(this.getElectionQuery);
             return this;
         }
 
@@ -172,12 +172,12 @@ public class GetElectionOprTest {
         }
 
         TestRunner setInvalidElectionId(String electionId) {
-            doThrow(new InvalidCredentialException("")).when(authenticationFacade).validateElectionViewer(anyString(), eq(electionId));
+            doThrow(new RestrictedActionException("")).when(authenticationFacade).validateElectionViewer(anyString(), eq(electionId));
             return this;
         }
 
         TestRunner setVoterIneligibleToViewElection(String voterId, String electionId) {
-            doThrow(new InvalidCredentialException("")).when(authenticationFacade).validateElectionViewer(voterId, electionId);
+            doThrow(new RestrictedActionException("")).when(authenticationFacade).validateElectionViewer(voterId, electionId);
             return this;
         }
 
@@ -206,7 +206,5 @@ public class GetElectionOprTest {
             assert election.getAdminVoterId().equals(expectedElection.getAdminVoterId());
             return this;
         }
-
     }
-
 }

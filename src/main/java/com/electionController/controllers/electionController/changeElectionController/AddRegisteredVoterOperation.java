@@ -42,7 +42,7 @@ public class AddRegisteredVoterOperation extends ActionController<AddRegisteredV
     }
 
     @Override
-    public Response executeAction(final AddRegisteredVoterToElectionQuery addRegisteredVoterToElectionQuery) {
+    protected Response executeAction(final AddRegisteredVoterToElectionQuery addRegisteredVoterToElectionQuery) {
         return this.addRegisteredVotersToElection(addRegisteredVoterToElectionQuery);
     }
 
@@ -55,7 +55,7 @@ public class AddRegisteredVoterOperation extends ActionController<AddRegisteredV
                 addRegisteredVoterToElectionQuery.getElectionId());
     }
 
-    public Response addRegisteredVotersToElection(
+    private Response addRegisteredVotersToElection(
             final AddRegisteredVoterToElectionQuery addRegisteredVoterToElectionQuery) {
         // Set of already registered
         Set<String> voters = dbGetter.getElectionVoters(addRegisteredVoterToElectionQuery.getElectionId())

@@ -16,5 +16,7 @@ public class TestConstants {
     public static final String INVALID_ELECTION_ID = "INVALID_ELECTION_ID";
     public static final String ELECTION_DESCRIPTION = "ELECTION_DESCRIPTION";
     public static final String ELECTION_TITLE = "ELECTION_TITLE";
+    public static final String VOTER_NAME = "VOTER_NAME";
+    public static final String ANY_STRING = "ANY_STRING";
     public static final String EMPTY_STRING = Strings.EMPTY;
 }

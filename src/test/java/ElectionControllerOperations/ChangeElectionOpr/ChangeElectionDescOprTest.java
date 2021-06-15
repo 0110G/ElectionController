@@ -2,13 +2,13 @@ package ElectionControllerOperations.ChangeElectionOpr;
 
 import com.electionController.constants.ResponseCodes;
 import com.electionController.constants.TestConstants;
-import com.electionController.controllers.electionController.changeElectionController.ChangeTitleOperation;
+import com.electionController.controllers.electionController.changeElectionController.ChangeDescriptionOperation;
 import com.electionController.dbConnector.Updater.DBUpdater;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
 import com.electionController.exceptions.RestrictedActionException;
 import com.electionController.facades.AuthenticationFacade;
-import com.electionController.structures.APIParams.ChangeElection.ChangeElectionTitleQuery;
+import com.electionController.structures.APIParams.ChangeElection.ChangeElectionDescriptionQuery;
 import com.electionController.structures.Response;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +19,14 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 
-public class ChangeElectionTitleOprTest {
+public class ChangeElectionDescOprTest {
 
     @InjectMocks
-    private ChangeTitleOperation changeTitleOperation;
+    private ChangeDescriptionOperation changeDescriptionOperation;
 
     @Mock
     private AuthenticationFacade authenticationFacade;
@@ -42,76 +42,76 @@ public class ChangeElectionTitleOprTest {
     @Test(expected = InvalidParameterException.class)
     public void test_shouldThrowInvalidParamExceptionWhenNullQueryPassed() {
         new TestRunner()
-                .setChangeElectionTitleQuery(null)
-                .callChangeElectionTitleOperation();
+                .setElectionDescQuery(null)
+                .callChangeElectionDescriptionOperation();
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenInvalidVoterIdPassed() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.ELECTION_TITLE)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.ELECTION_DESCRIPTION)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .withVoterId(TestConstants.INVALID_VOTER_ID)
                 .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setInvalidVoterId(TestConstants.INVALID_VOTER_ID)
-                .callChangeElectionTitleOperation();
+                .callChangeElectionDescriptionOperation();
     }
 
     @Test(expected = InvalidCredentialException.class)
     public void test_shouldThrowInvalidCredentialExceptionWhenIncorrectPasswordPassed() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.ELECTION_TITLE)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.ELECTION_DESCRIPTION)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .withVoterId(TestConstants.VALID_VOTER_ID)
                 .withVoterPassword(TestConstants.INCORRECT_VOTER_PASSWORD)
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
-                .callChangeElectionTitleOperation();
+                .callChangeElectionDescriptionOperation();
     }
 
     @Test(expected = RestrictedActionException.class)
     public void test_shouldThrowRestrictedActionExceptionWhenInvalidElectionIdPassed() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.ELECTION_TITLE)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.ELECTION_DESCRIPTION)
                 .withElectionId(TestConstants.INVALID_ELECTION_ID)
                 .withVoterId(TestConstants.VALID_VOTER_ID)
                 .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .setInvalidElectionId(TestConstants.INVALID_ELECTION_ID)
-                .callChangeElectionTitleOperation();
+                .callChangeElectionDescriptionOperation();
     }
 
     @Test(expected = RestrictedActionException.class)
     public void test_shouldThrowRestrictedAccessExceptionWhenVoterNotAdminOfGivenElection() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.ELECTION_TITLE)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.ELECTION_DESCRIPTION)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .withVoterId(TestConstants.VALID_VOTER_ID1)
                 .withVoterPassword(TestConstants.CORRECT_PASSWORD)
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .setElectionAdmin(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
-                .callChangeElectionTitleOperation();
+                .callChangeElectionDescriptionOperation();
     }
 
     @Test
     public void test_shouldNotUpdateElectionTitleAndReturnExpectedResponseOnEmptyElectionTitlePassed() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.EMPTY_STRING)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.EMPTY_STRING)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .withVoterId(TestConstants.VALID_VOTER_ID)
                 .withVoterPassword(TestConstants.CORRECT_PASSWORD)
@@ -120,23 +120,23 @@ public class ChangeElectionTitleOprTest {
         Response expectedResponse = Response.Builder()
                 .withResponse(null)
                 .withStatusCode(200)
-                .withStatus("EMPTY_TITLE_PASSED")
+                .withStatus("EMPTY_DESCRIPTION_PASSED")
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setExpectedResponse(expectedResponse)
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .setElectionAdmin(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
-                .callChangeElectionTitleOperation()
+                .callChangeElectionDescriptionOperation()
                 .verifyThatDBPutterCalledWithTimes(TestConstants.EMPTY_STRING, TestConstants.VALID_ELECTION_ID, 0)
-                .verifyChangeElectionTitleResponse();
+                .verifyChangeElectionDescriptionResponse();
     }
 
     @Test
     public void test_shouldUpdateElectionTitleAndReturnExpectedResponseOnNonEmptyElectionTitlePassed() {
-        ChangeElectionTitleQuery changeElectionTitleQuery = ChangeElectionTitleQuery.Builder()
-                .withElectionTitle(TestConstants.ELECTION_TITLE)
+        ChangeElectionDescriptionQuery changeElectionDescriptionQuery = ChangeElectionDescriptionQuery.Builder()
+                .withElectionDescription(TestConstants.ELECTION_DESCRIPTION)
                 .withElectionId(TestConstants.VALID_ELECTION_ID)
                 .withVoterId(TestConstants.VALID_VOTER_ID)
                 .withVoterPassword(TestConstants.CORRECT_PASSWORD)
@@ -149,17 +149,17 @@ public class ChangeElectionTitleOprTest {
                 .build();
 
         new TestRunner()
-                .setChangeElectionTitleQuery(changeElectionTitleQuery)
+                .setElectionDescQuery(changeElectionDescriptionQuery)
                 .setExpectedResponse(expectedResponse)
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .setElectionAdmin(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
-                .callChangeElectionTitleOperation()
-                .verifyThatDBPutterCalledWithTimes(TestConstants.ELECTION_TITLE, TestConstants.VALID_ELECTION_ID, 1)
-                .verifyChangeElectionTitleResponse();
+                .callChangeElectionDescriptionOperation()
+                .verifyThatDBPutterCalledWithTimes(TestConstants.ELECTION_DESCRIPTION, TestConstants.VALID_ELECTION_ID, 1)
+                .verifyChangeElectionDescriptionResponse();
     }
 
     private class TestRunner {
-        private ChangeElectionTitleQuery changeElectionTitleQuery;
+        private ChangeElectionDescriptionQuery changeElectionDescriptionQuery;
         private Response actualResponse;
         private Response expectedResponse;
 
@@ -168,8 +168,8 @@ public class ChangeElectionTitleOprTest {
             doNothing().when(authenticationFacade).validateElectionAdmin(anyString(), anyString());
         }
 
-        TestRunner setChangeElectionTitleQuery(ChangeElectionTitleQuery changeElectionTitleQuery) {
-            this.changeElectionTitleQuery = changeElectionTitleQuery;
+        TestRunner setElectionDescQuery(ChangeElectionDescriptionQuery changeElectionDescriptionQuery) {
+            this.changeElectionDescriptionQuery = changeElectionDescriptionQuery;
             return this;
         }
 
@@ -201,20 +201,20 @@ public class ChangeElectionTitleOprTest {
             return this;
         }
 
-        TestRunner verifyThatDBPutterCalledWithTimes(String electionTitle, String electionId, int times) {
-            Mockito.verify(dbUpdater, times(times)).updateElectionTitle(electionId, electionTitle);
+        TestRunner verifyThatDBPutterCalledWithTimes(String electionDecription, String electionId, int times) {
+            Mockito.verify(dbUpdater, times(times)).updateElectionDescription(electionId, electionDecription);
             return this;
         }
 
-        TestRunner verifyChangeElectionTitleResponse() {
+        TestRunner verifyChangeElectionDescriptionResponse() {
             assert actualResponse.getStatus().equals(expectedResponse.getStatus());
             assert actualResponse.getStatusCode() == expectedResponse.getStatusCode();
             assert actualResponse.getResponse() == null;
             return this;
         }
 
-        TestRunner callChangeElectionTitleOperation() {
-            this.actualResponse = changeTitleOperation.execute(this.changeElectionTitleQuery);
+        TestRunner callChangeElectionDescriptionOperation() {
+            this.actualResponse = changeDescriptionOperation.execute(this.changeElectionDescriptionQuery);
             return this;
         }
     }

@@ -25,7 +25,7 @@ public abstract class ActionController<Query, Response> {
 
     public abstract ControllerOperation getControllerOperation();
 
-    public abstract Response executeAction(final Query query);
+    protected abstract Response executeAction(final Query query);
 
     public abstract void validateActionAccess(final Query query);
 

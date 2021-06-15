@@ -23,7 +23,7 @@ public class PingOperation extends ActionController<Object, Response> {
     }
 
     @Override
-    public Response executeAction(final Object payload) {
+    protected Response executeAction(final Object payload) {
         return this.sendPing(null);
     }
 
@@ -32,7 +32,7 @@ public class PingOperation extends ActionController<Object, Response> {
         // No permissions required
     }
 
-    public Response sendPing(final Object payload) {
+    private Response sendPing(final Object payload) {
         return new Response.Builder()
                 .withResponse(payload)
                 .withStatusCode(5505)

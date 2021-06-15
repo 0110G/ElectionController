@@ -272,7 +272,7 @@ public class NewElectionOprTest {
         }
 
         TestRunner callNewElectionRequest() {
-            this.actualResponse = newElectionOperation.createElection(this.newElectionQuery);
+            this.actualResponse = newElectionOperation.execute(this.newElectionQuery);
             return this;
         }
 

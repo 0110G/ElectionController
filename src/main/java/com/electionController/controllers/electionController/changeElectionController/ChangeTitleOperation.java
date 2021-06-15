@@ -33,7 +33,7 @@ public class ChangeTitleOperation extends ActionController<ChangeElectionTitleQu
     }
 
     @Override
-    public Response executeAction(final ChangeElectionTitleQuery changeElectionTitleQuery) {
+    protected Response executeAction(final ChangeElectionTitleQuery changeElectionTitleQuery) {
         return this.changeElectionTitle(changeElectionTitleQuery);
     }
 
@@ -46,7 +46,7 @@ public class ChangeTitleOperation extends ActionController<ChangeElectionTitleQu
                 changeElectionTitleQuery.getElectionId());
     }
 
-    public Response changeElectionTitle(final ChangeElectionTitleQuery changeElectionTitleQuery) {
+    private Response changeElectionTitle(final ChangeElectionTitleQuery changeElectionTitleQuery) {
         if (changeElectionTitleQuery.getElectionTitle() == null ||
             changeElectionTitleQuery.getElectionTitle().isEmpty()) {
             return Response.Builder()

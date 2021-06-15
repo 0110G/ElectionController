@@ -44,7 +44,7 @@ public class NewElectionOperation extends ActionController<NewElectionQuery, Res
     }
 
     @Override
-    public Response executeAction(final NewElectionQuery newElectionQuery) {
+    protected Response executeAction(final NewElectionQuery newElectionQuery) {
         return this.createElection(newElectionQuery);
     }
 
@@ -55,7 +55,7 @@ public class NewElectionOperation extends ActionController<NewElectionQuery, Res
                 newElectionQuery.getVoterPassword());
     }
 
-    public Response createElection(final NewElectionQuery newElectionQuery) {
+    private Response createElection(final NewElectionQuery newElectionQuery) {
         Election regElection = mapNewElectionQueryToElection(newElectionQuery, Integer.toString(currentId));
         dbPutter.registerElection(regElection);
         currentId++;
