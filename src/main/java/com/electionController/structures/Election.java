@@ -1,6 +1,7 @@
 package com.electionController.structures;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Election {
@@ -10,6 +11,7 @@ public class Election {
     private String adminVoterId;
     private List<Voter> eligibleVoters = new ArrayList<>();
     private List<Post> availablePost = new ArrayList<Post>();
+    private Date createdOn;
 
     public String getElectionTitle() {
         return this.electionTitle;
@@ -55,13 +57,13 @@ public class Election {
         this.availablePost = availablePost;
     }
 
-    //    public List<VoterMap> getRegisteredVoters() {
-//        return this.registeredVoters;
-//    }
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
 
-//    public void setRegisteredVoters(List<VoterMap> registeredVoters) {
-//        this.registeredVoters = registeredVoters;
-//    }
+    public Date getCreatedOn() {
+        return this.createdOn;
+    }
 
     public List<Post> getAvailablePost() {
         return this.availablePost;

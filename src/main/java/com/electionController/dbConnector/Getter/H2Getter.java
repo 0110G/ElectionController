@@ -256,6 +256,7 @@ public class H2Getter implements DBGetter {
             el.setElectionId(rs.getString("electionId"));
             el.setElectionDescription(rs.getString("electionDescription"));
             el.setAdminVoterId(rs.getString("adminVoterId"));
+            el.setCreatedOn(rs.getTimestamp("createdOn"));
             return el;
         }
     }
