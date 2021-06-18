@@ -5,12 +5,20 @@ package com.electionController.exceptions;
 *  ENDPOINT exception
 * */
 public class InvalidParameterException extends RuntimeException {
-    private String errorMessage;
-    private int errorCode;
+    private final String errorMessage;
+    private final String errorDetails;
+    private final int errorCode;
 
-    public InvalidParameterException(String message) {
+    public InvalidParameterException(final String message) {
         this.errorMessage = message;
+        this.errorDetails = message;
         this.errorCode = 404;
+    }
+
+    public InvalidParameterException(final int errorCode, final String errorMessage, final String errorDetails) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.errorDetails = errorDetails;
     }
 
     public String getErrorMessage() {
@@ -19,5 +27,9 @@ public class InvalidParameterException extends RuntimeException {
 
     public int getErrorCode() {
         return this.errorCode;
+    }
+
+    public String getErrorDetails() {
+        return this.errorDetails;
     }
 }

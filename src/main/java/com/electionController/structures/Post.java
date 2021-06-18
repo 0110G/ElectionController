@@ -10,6 +10,7 @@ public class Post {
     private String postDescription;
     private List<Contestant> contestants = new ArrayList<Contestant>();
     private WinCriteria winCriteria = WinCriteria.GREATEST_NUMBER_OF_VOTES;
+    private int totalContestants;
 
     public enum WinCriteria {
         GREATEST_NUMBER_OF_VOTES(0),
@@ -89,6 +90,10 @@ public class Post {
     public int getTotalContestants() {
         if (this.contestants == null) {return 0;}
         return this.contestants.size();
+    }
+
+    public void setTotalContestants(int totalContestants) {
+        this.totalContestants = totalContestants;
     }
 
     public void setPostIndex(int postIndex) {

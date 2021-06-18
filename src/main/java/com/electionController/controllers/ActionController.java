@@ -1,6 +1,7 @@
 package com.electionController.controllers;
 
 import com.electionController.constants.ControllerOperation;
+import com.electionController.constants.ResponseCodes;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.dbConnector.Putter.DBPutter;
 import com.electionController.dbConnector.Updater.DBUpdater;
@@ -38,23 +39,30 @@ public abstract class ActionController<Query, Response> {
             ConsoleLogger.Log(getControllerOperation(), "SUCCESSFULLY_EXECUTED");
             return response;
         } catch (InvalidCredentialException ex) {
-            ConsoleLogger.Log(getControllerOperation(), "[InvalidCredentialException]", ex.getErrorMessage());
-            throw new InvalidCredentialException("INCORRECT_USERNAME/PASSWORD");
+            ConsoleLogger.Log(getControllerOperation(), "[InvalidCredentialException]", ex.getErrorMessage(),
+                    ex.getErrorDetails());
+            throw new InvalidCredentialException(ex.getErrorCode(), ex.getErrorMessage());
         } catch (InvalidParameterException ex) {
-            ConsoleLogger.Log(getControllerOperation(), "[InvalidParameterException]", ex.getErrorMessage());
+            ConsoleLogger.Log(getControllerOperation(), "[InvalidParameterException]", ex.getErrorMessage(),
+                    ex.getErrorDetails());
             throw ex;
         } catch (RestrictedActionException ex) {
-            ConsoleLogger.Log(getControllerOperation(), "[RestrictedActionException]", ex.getErrorMessage());
-            throw new RestrictedActionException("INSUFFICIENT_PERMISSIONS_FOR_ACTION");
+            ConsoleLogger.Log(getControllerOperation(), "[RestrictedActionException]", ex.getErrorMessage(),
+                    ex.getErrorDetails());
+            throw ex;
         } catch (InternalServiceException ex) {
-            ConsoleLogger.Log(getControllerOperation(), "[InternalServiceException]", ex.getErrorMessage());
+            ConsoleLogger.Log(getControllerOperation(), "[InternalServiceException]", ex.getErrorMessage(),
+                    ex.getErrorDetails());
             throw ex;
         } catch (EntityNotFoundException ex) {
-            ConsoleLogger.Log(getControllerOperation(), "[EntityNotFoundException]", ex.getErrorMessage());
-            throw new InternalServiceException("ENTITY_ERROR");
+            ConsoleLogger.Log(getControllerOperation(), "[EntityNotFoundException]", ex.getErrorMessage(),
+                    ex.getErrorDetails());
+            throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR.getResponseCode(),
+                    ResponseCodes.INTERNAL_ERROR.getResponse());
         } catch (Exception ex) {
             ConsoleLogger.Log(getControllerOperation(), "[UNKNOWN_EXCEPTION]", ex.getMessage());
-            throw new InternalServiceException("UNKNOWN_ERROR");
+            throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR.getResponseCode(),
+                    ResponseCodes.INTERNAL_ERROR.getResponse());
         }
     }
 }

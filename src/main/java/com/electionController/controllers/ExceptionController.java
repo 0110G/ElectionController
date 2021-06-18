@@ -22,7 +22,7 @@ public class ExceptionController {
         return Response.Builder()
                 .withResponse(EntityNotFoundException.class)
                 .withStatusCode(ex.getErrorCode())
-                .withStatus(ex.getErrorMessage())
+                .withStatus(ex.getErrorMessage() + " " + ex.getErrorDetails())
                 .build();
     }
 
@@ -33,7 +33,7 @@ public class ExceptionController {
         return Response.Builder()
                 .withResponse(RestrictedActionException.class)
                 .withStatusCode(ex.getErrorCode())
-                .withStatus(ex.getErrorMessage())
+                .withStatus(ex.getErrorMessage() + " " + ex.getErrorDetails())
                 .build();
     }
 
@@ -44,7 +44,7 @@ public class ExceptionController {
         return Response.Builder()
                 .withResponse(InvalidCredentialException.class)
                 .withStatusCode(ex.getErrorCode())
-                .withStatus(ex.getErrorMessage())
+                .withStatus(ex.getErrorMessage() + " " + ex.getErrorDetails())
                 .build();
     }
 
@@ -55,7 +55,7 @@ public class ExceptionController {
         return Response.Builder()
                 .withResponse(InvalidParameterException.class)
                 .withStatusCode(ex.getErrorCode())
-                .withStatus(ex.getErrorMessage())
+                .withStatus(ex.getErrorMessage() + " " + ex.getErrorDetails())
                 .build();
     }
 
@@ -66,7 +66,7 @@ public class ExceptionController {
         return Response.Builder()
                 .withResponse(InternalServiceException.class)
                 .withStatusCode(ex.getErrorCode())
-                .withStatus(ex.getErrorMessage())
+                .withStatus(ex.getErrorMessage() + " " + ex.getErrorDetails())
                 .build();
     }
 

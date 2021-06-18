@@ -74,7 +74,8 @@ public class VoteOperation extends ActionController<VoteQuery, Response> {
     private Response vote(final VoteQuery voteQuery) {
         String voted = dbGetter.getVoterMap(voteQuery.getVoterId(), voteQuery.getElectionId()).getHasVoted();
         if(!checkIfVoterEligibleToVoteForGivenPostFromVotedString(voted, voteQuery.getPostId())) {
-            throw new RestrictedActionException("ALREADY_VOTED_FOR_POST");
+            throw new RestrictedActionException(ResponseCodes.NOT_ELIGIBLE_TO_VOTE.getResponseCode(),
+                    ResponseCodes.NOT_ELIGIBLE_TO_VOTE.getResponse(), null);
         }
         dbUpdater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
         dbUpdater.markVoterVotedForPost(voteQuery.getVoterId(), voteQuery.getElectionId(),

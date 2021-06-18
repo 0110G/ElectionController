@@ -3,17 +3,20 @@ package com.electionController.exceptions;
 import com.electionController.constants.ResponseCodes;
 
 public class RestrictedActionException extends RuntimeException{
-    private String errorMessage;
-    private int errorCode;
+    private final String errorMessage;
+    private final String errorDetails;
+    private final int errorCode;
 
-    public RestrictedActionException(String message) {
+    public RestrictedActionException(final String message) {
         this.errorMessage = message;
+        this.errorDetails = message;
         this.errorCode = 404;
     }
 
-    public RestrictedActionException(ResponseCodes responseCode) {
-        this.errorMessage = responseCode.getResponse();
-        this.errorCode = responseCode.getResponseCode();
+    public RestrictedActionException(final int errorCode, final String errorMessage, final String errorDetails) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.errorDetails = errorDetails;
     }
 
     public String getErrorMessage() {
@@ -22,5 +25,9 @@ public class RestrictedActionException extends RuntimeException{
 
     public int getErrorCode() {
         return this.errorCode;
+    }
+
+    public String getErrorDetails() {
+        return this.errorDetails;
     }
 }

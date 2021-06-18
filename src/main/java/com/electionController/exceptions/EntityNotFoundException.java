@@ -1,23 +1,25 @@
 package com.electionController.exceptions;
 
-import com.electionController.constants.ResponseCodes;
 
 /*
  * Throw when item not found in Database
  * NOT TO BE USED FOR NON DB USECASES
 * */
 public class EntityNotFoundException extends RuntimeException {
-    private String errorMessage;
-    private int errorCode;
+    private final String errorMessage;
+    private final String errorDetails;
+    private final int errorCode;
 
     public EntityNotFoundException(final String message) {
         this.errorMessage = message;
+        this.errorDetails = "";
         this.errorCode = 404;
     }
 
-    public EntityNotFoundException(final ResponseCodes responseCode) {
-        this.errorCode = responseCode.getResponseCode();
-        this.errorMessage = responseCode.getResponse();
+    public EntityNotFoundException(final int errorCode, final String errorMessage, final String errorDetails) {
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.errorDetails = errorDetails;
     }
 
     public String getErrorMessage() {
@@ -26,5 +28,9 @@ public class EntityNotFoundException extends RuntimeException {
 
     public int getErrorCode() {
         return this.errorCode;
+    }
+
+    public String getErrorDetails() {
+        return this.errorDetails;
     }
 }

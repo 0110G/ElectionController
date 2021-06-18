@@ -1,5 +1,6 @@
 package com.electionController.controllers.electionController;
 
+import com.electionController.constants.ResponseCodes;
 import com.electionController.exceptions.InvalidParameterException;
 
 public  class ElectionController {
@@ -8,7 +9,8 @@ public  class ElectionController {
 
     public static void ValidateNotNull(final Object obj) {
         if (obj == null) {
-            throw new InvalidParameterException("Invalid Parameter");
+            throw new InvalidParameterException(ResponseCodes.NULL_QUERY.getResponseCode(),
+                    ResponseCodes.NULL_QUERY.getResponse(), null);
         }
     }
 

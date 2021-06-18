@@ -1,5 +1,6 @@
 package com.electionController.facades;
 
+import com.electionController.constants.ResponseCodes;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.exceptions.InvalidParameterException;
@@ -31,13 +32,17 @@ public class AuthenticationFacade {
            if (voter != null) {
                if (voter.getVoterPassword() == null ||
                        !voter.getVoterPassword().equals(voterPassword)) {
-                   throw new InvalidCredentialException("INVALID_PASSWORD, voterId:" + voterId);
+                   throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS.getResponseCode(),
+                           ResponseCodes.INVALID_VOTER_CREDENTIALS.getResponse(),
+                           "Incorrect password VoterId:" + voterId);
                }
            } else {
-               throw new InternalServiceException("NULL_VOTER_RETURNED, voterId:" + voterId);
+               throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR.getResponseCode(),
+                       ResponseCodes.INTERNAL_ERROR.getResponse(), "Null voter returned: VoterId:" + voterId);
            }
        } catch (EntityNotFoundException ex) {
-           throw new InvalidCredentialException("INVALID_VOTER_ID" + voterId);
+           throw new InvalidCredentialException(ResponseCodes.INVALID_VOTER_CREDENTIALS.getResponseCode(),
+                   ResponseCodes.INVALID_VOTER_CREDENTIALS.getResponse(), "Invalid VoterId:" + voterId);
        }
     }
 
@@ -51,7 +56,8 @@ public class AuthenticationFacade {
             try {
                 dbGetter.getVoter(voterId);
             } catch (EntityNotFoundException ex) {
-                throw new InvalidParameterException("INVALID_VOTER_ID voterId:" + voterId);
+                throw new InvalidParameterException(ResponseCodes.INVALID_VOTER.getResponseCode(),
+                        ResponseCodes.INVALID_VOTER.getResponse(), "VoterId:" + voterId);
             }
         }
     }
@@ -68,16 +74,17 @@ public class AuthenticationFacade {
             VoterMap voterMap = dbGetter.getVoterMap(voterId, electionId);
             if (voterMap != null) {
                 if (!voterMap.getVoterEligible() || !voterMap.getVoterAdmin()) {
-                    throw new RestrictedActionException("VOTER_NOT_ADMIN voterId:" + voterId +
-                            " electionId:" + electionId);
+                    throw new RestrictedActionException(ResponseCodes.NOT_ADMIN.getResponseCode(),
+                            ResponseCodes.NOT_ADMIN.getResponse(), "VoterId:" + voterId + " ElectionId:" + electionId);
                 }
             } else {
-                throw new InternalServiceException("NULL_VOTER_MAP_RETURNED voterId:" + voterId + " electionId:" +
-                        electionId);
+                throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR.getResponseCode(),
+                        ResponseCodes.INTERNAL_ERROR.getResponse(), "Null voter_map " +
+                        "returned: VoterId:" + voterId + " ElectionId:" + electionId);
             }
         } catch (EntityNotFoundException ex) {
-            throw new RestrictedActionException("VOTER_NOT_BELONG_TO_ELECTION voterId:" + voterId + " electionId:" +
-                    electionId);
+            throw new RestrictedActionException(ResponseCodes.NOT_ADMIN.getResponseCode(),
+                    ResponseCodes.NOT_ADMIN.getResponse(), "VoterId:" + voterId + " ElectionId:" + electionId);
         }
     }
 
@@ -92,12 +99,14 @@ public class AuthenticationFacade {
         try {
             VoterMap voterMap = dbGetter.getVoterMap(voterId, electionId);
             if (voterMap == null) {
-                throw new InternalServiceException("NULL_VOTER_MAP_RETURNED, voterId:" + voterId + " electionId:"
-                    + electionId);
+                throw new InternalServiceException(ResponseCodes.INTERNAL_ERROR.getResponseCode(),
+                        ResponseCodes.INTERNAL_ERROR.getResponse(), "Null voter_map " +
+                        "returned: VoterId:" + voterId + " ElectionId:" + electionId);
             }
         } catch (EntityNotFoundException ex) {
-            throw new RestrictedActionException("VOTER_NOT_BELONG_TO_ELECTION voterId:" + voterId + " electionId:" +
-                    electionId);
+            throw new RestrictedActionException(ResponseCodes.NOT_ELIGIBLE_VIEWER.getResponseCode(),
+                    ResponseCodes.NOT_ELIGIBLE_VIEWER.getResponse(), "VoterId:" + voterId + " ElectionId:"
+                    + electionId);
         }
     }
 
@@ -112,8 +121,9 @@ public class AuthenticationFacade {
         try {
             dbGetter.getElectionPost(electionId, postId);
         } catch (EntityNotFoundException ex) {
-            throw new InvalidParameterException("POST_NOT_PART_OF_ELECTION postId: " + postId
-            + " electionId:" + electionId);
+            throw new InvalidParameterException(ResponseCodes.POST_NOT_PART_OF_ELECTION.getResponseCode(),
+                    ResponseCodes.POST_NOT_PART_OF_ELECTION.getResponse(), "PostId:" + postId + " ElectionId:" +
+                    electionId);
         }
     }
 
@@ -128,8 +138,9 @@ public class AuthenticationFacade {
         try {
             dbGetter.getPostContestant(postId, candidateId);
         } catch (EntityNotFoundException ex) {
-            throw new InvalidParameterException("CANDIDATE_NOT_REGISTERED_FOR_GIVEN_POST postId:" + postId +
-                    "candidateId:" + candidateId);
+            throw new InvalidParameterException(ResponseCodes.CANDIDATE_NOT_PART_OF_POST.getResponseCode(),
+                    ResponseCodes.CANDIDATE_NOT_PART_OF_POST.getResponse(), "PostId:" + postId + " CandidateId:" +
+                    candidateId);
         }
     }
 }
