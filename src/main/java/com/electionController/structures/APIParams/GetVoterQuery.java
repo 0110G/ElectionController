@@ -18,12 +18,12 @@ public class GetVoterQuery {
         private String voterId;
         private String voterPassword;
 
-        Builder withVoterId(final String voterId) {
+        public Builder withVoterId(final String voterId) {
             this.voterId = voterId;
             return this;
         }
 
-        Builder withVoterPassword(final String voterPassword) {
+        public Builder withVoterPassword(final String voterPassword) {
             this.voterPassword = voterPassword;
             return this;
         }

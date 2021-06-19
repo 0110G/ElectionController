@@ -8,7 +8,7 @@ import com.electionController.structures.APIParams.GetVoterQuery;
 import com.electionController.structures.Response;
 import com.electionController.structures.Voter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +28,7 @@ public class GetVoterOperation extends ActionController<GetVoterQuery, Response>
     }
 
     @Override
-    @GetMapping("/GetVoter")
+    @PostMapping("/GetVoter")
     public Response execute(@RequestBody GetVoterQuery getVoterQuery) {
         return super.execute(getVoterQuery);
     }
@@ -46,6 +46,7 @@ public class GetVoterOperation extends ActionController<GetVoterQuery, Response>
 
     public Response getVoter(@RequestBody GetVoterQuery getVoterQuery) {
         Voter requiredVoter = dbGetter.getVoter(getVoterQuery.getVoterId());
+        requiredVoter.setVoterPassword("**************");
         return Response.Builder()
                 .withStatus(ResponseCodes.SUCCESS.getResponse())
                 .withStatusCode(ResponseCodes.SUCCESS.getResponseCode())

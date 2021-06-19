@@ -55,6 +55,7 @@ public class AddRegisteredVoterOperation extends ActionController<AddRegisteredV
                 addRegisteredVoterToElectionQuery.getElectionId());
     }
 
+    // TODO: Use headers and field for GET mappings
     private Response addRegisteredVotersToElection(
             final AddRegisteredVoterToElectionQuery addRegisteredVoterToElectionQuery) {
         // Set of already registered
