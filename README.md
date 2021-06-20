@@ -12,9 +12,8 @@ in the future.
 
 ## Introduction ##
 This API allows a user to 
-1. Create and host a new election, set the time of
-   election and customize winning criteria.
-2. Add required participants to those elections.
+1. Create and host a new election
+2. Add/Delete required participants to elections.
 3. Add multiple posts for an election (for eg. in a 
    colony election, we might have posts for Head, 
    Treasurer... etc)
@@ -24,10 +23,8 @@ This API allows a user to
    
    4b. Add/Remove/Refactor Posts
    
-    4c. Add/Remove candidates
-    
-   **These actions are possible only if the
-   requesting user is authorised to do so**.
+   4c. Add/Remove Post contestants
+
 5. And of course **Vote**.
 
 
