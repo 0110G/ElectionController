@@ -23,7 +23,7 @@ import static com.electionController.controllers.electionController.ElectionCont
 import static com.electionController.controllers.electionController.ElectionController.getValueOrDefault;
 
 @RestController
-public class NewElectionOperation extends ActionController<NewElectionQuery, Response> {
+public final class NewElectionOperation extends ActionController<NewElectionQuery, Response> {
 
     private static int currentId = 0;
 

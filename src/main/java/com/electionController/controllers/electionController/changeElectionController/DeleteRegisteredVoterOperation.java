@@ -18,7 +18,7 @@ import static com.electionController.controllers.electionController.ElectionCont
 * @author : bhavya saraf
 */
 @RestController
-public class DeleteRegisteredVoterOperation extends ActionController<DeleteRegisteredVoterFromElectionQuery, Response> {
+public final class DeleteRegisteredVoterOperation extends ActionController<DeleteRegisteredVoterFromElectionQuery, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.CHANGE_ELECTION_DELETE_VOTERS;
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
 
 @RestController
-public class ChangeTitleOperation extends ActionController<ChangeElectionTitleQuery, Response> {
+public final class ChangeTitleOperation extends ActionController<ChangeElectionTitleQuery, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.CHANGE_ELECTION_TITLE;
 

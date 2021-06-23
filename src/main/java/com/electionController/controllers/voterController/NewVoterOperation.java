@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
 
 @RestController
-public class NewVoterOperation extends ActionController<NewVoterQuery, Response> {
+public final class NewVoterOperation extends ActionController<NewVoterQuery, Response> {
 
     static int currentVoterId = 0;
 

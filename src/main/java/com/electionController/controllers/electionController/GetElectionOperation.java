@@ -20,7 +20,7 @@ import java.util.List;
 import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
 
 @RestController
-public class GetElectionOperation extends ActionController<GetElectionQuery, Response> {
+public final class GetElectionOperation extends ActionController<GetElectionQuery, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.GET_ELECTION;
 

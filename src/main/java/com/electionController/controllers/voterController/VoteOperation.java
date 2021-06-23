@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
 
 @RestController
-public class VoteOperation extends ActionController<VoteQuery, Response> {
+public final class VoteOperation extends ActionController<VoteQuery, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.VOTER_VOTE;
 

@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MainClass {
     public static void main(String[] args) {
         System.out.println("******** WELCOME TO ELECTION CONTROLLER by 0110G ********");
-        System.out.println("******** DEPLOYING ********");
+        System.out.println("******** DEPLOYING at PORT:8080 ********");
         SpringApplication.run(MainClass.class, args);
     }
 }

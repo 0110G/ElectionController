@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class PingOperation extends ActionController<Object, Response> {
+public final class PingOperation extends ActionController<Object, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.PING;
 

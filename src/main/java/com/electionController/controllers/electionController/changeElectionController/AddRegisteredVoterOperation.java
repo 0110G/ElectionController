@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
 
 @RestController
-public class AddRegisteredVoterOperation extends ActionController<AddRegisteredVoterToElectionQuery, Response> {
+public final class AddRegisteredVoterOperation extends ActionController<AddRegisteredVoterToElectionQuery, Response> {
 
     private static final ControllerOperation ACTION = ControllerOperation.CHANGE_ELECTION_ADD_VOTERS;
 

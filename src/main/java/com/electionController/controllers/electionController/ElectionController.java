@@ -3,7 +3,7 @@ package com.electionController.controllers.electionController;
 import com.electionController.constants.ResponseCodes;
 import com.electionController.exceptions.InvalidParameterException;
 
-public  class ElectionController {
+public class ElectionController {
 
     // TODO: Add support for genenrating election id
 

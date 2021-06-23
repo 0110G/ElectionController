@@ -40,6 +40,19 @@ public class Post {
             }
         }
 
+        public static WinCriteria getWinCriteria(final String criteria) {
+            switch (criteria) {
+                case "GREATEST_NUMBER_OF_VOTES" :
+                    return GREATEST_NUMBER_OF_VOTES;
+                case "LOWEST_NUMBER_OF_VOTES":
+                    return LOWEST_NUMBER_OF_VOTES;
+                case "MAJORITY":
+                    return MAJORITY;
+                default:
+                    return GREATEST_NUMBER_OF_VOTES;
+            }
+        }
+
     }
 
     public Post() {
