@@ -8,8 +8,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.ArgumentMatchers.any;
-
 public class PingOprTest {
     @InjectMocks
     private PingOperation pingOperation;
@@ -38,7 +36,7 @@ public class PingOprTest {
         private Response expectedResponse;
 
         TestRunner callPingOperation() {
-            this.actualResponse = pingOperation.execute(any());
+            this.actualResponse = pingOperation.execute(null);
             return this;
         }
 
