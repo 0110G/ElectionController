@@ -2,8 +2,14 @@ package facades;
 
 import com.electionController.constants.TestConstants;
 import com.electionController.dbConnector.Getter.DBGetter;
-import com.electionController.exceptions.*;
+import com.electionController.exceptions.InvalidParameterException;
+import com.electionController.exceptions.RestrictedActionException;
+import com.electionController.exceptions.InternalServiceException;
+import com.electionController.exceptions.EntityNotFoundException;
+import com.electionController.exceptions.InvalidCredentialException;
 import com.electionController.facades.AuthenticationFacade;
+import com.electionController.structures.Contestant;
+import com.electionController.structures.Post;
 import com.electionController.structures.Voter;
 import com.electionController.structures.VoterMap;
 import org.junit.Before;
@@ -16,7 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.doReturn;
 
 public class AuthenticationFacadeTest {
 
@@ -49,7 +58,7 @@ public class AuthenticationFacadeTest {
     public void test_validateVoterCredentialsShouldThrowInternalServiceExceptionOnDBReturningNullVoter() {
         new TestRunner()
                 .setValidVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
-                .mockDBGetterToReturnNullValuesForValidCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
+                .mockDBGetVoterToReturnNullValuesForValidCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD)
                 .callValidateVoterCredentials(TestConstants.VALID_VOTER_ID, TestConstants.CORRECT_PASSWORD);
     }
 
@@ -123,11 +132,92 @@ public class AuthenticationFacadeTest {
                 .callValidateElectionAdmin(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID);
     }
 
+    @Test(expected = RestrictedActionException.class)
+    public void test_validateElectionViewerShouldThrowRestrictedAccessExceptionOnInvalidVoterId() {
+        new TestRunner()
+                .setInvalidVoterId(TestConstants.INVALID_VOTER_ID)
+                .callValidateElectionViewer(TestConstants.INVALID_VOTER_ID, TestConstants.VALID_ELECTION_ID);
+
+    }
+
+    @Test(expected = RestrictedActionException.class)
+    public void test_validateElectionViewerShouldThrowRestrictedAccessExceptionOnInvalidElectionId() {
+        new TestRunner()
+                .setInvalidElectionId(TestConstants.INVALID_ELECTION_ID)
+                .callValidateElectionViewer(TestConstants.VALID_VOTER_ID, TestConstants.INVALID_ELECTION_ID);
+    }
+
+    @Test(expected = RestrictedActionException.class)
+    public void test_validateElectionViewerShouldThrowRestrictedAccessExceptionOnVoterNotRegisteredForElection() {
+        new TestRunner()
+                .setUnregisteredVoter(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
+                .callValidateElectionViewer(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID);
+    }
+
+    @Test
+    public void test_validateElectionViewerSuccessfulExecution() {
+        new TestRunner()
+                .setElectionNonAdminVoter(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID)
+                .callValidateElectionViewer(TestConstants.VALID_VOTER_ID, TestConstants.VALID_ELECTION_ID);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void test_validateElectionPostShouldThrowInvalidParameterExceptionOnInvalidElectionId() {
+        new TestRunner()
+                .setInvalidElectionId(TestConstants.INVALID_ELECTION_ID)
+                .callValidateElectionPost(TestConstants.INVALID_ELECTION_ID, TestConstants.VALID_POST_ID);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void test_validateElectionPostShouldThrowInvalidParameterExceptionOnPostNotBelongingToElection() {
+        new TestRunner()
+                .setPostNotBelongingToElection(TestConstants.VALID_ELECTION_ID, TestConstants.VALID_POST_ID)
+                .setPostBelongingToElection(TestConstants.VALID_ELECTION_ID, TestConstants.VALID_POST_ID1)
+                .callValidateElectionPost(TestConstants.VALID_ELECTION_ID, TestConstants.VALID_POST_ID);
+    }
+
+    @Test
+    public void test_validateElectionPostSuccessfulExecution() {
+        new TestRunner()
+                .setPostBelongingToElection(TestConstants.VALID_ELECTION_ID, TestConstants.VALID_POST_ID)
+                .callValidateElectionPost(TestConstants.VALID_ELECTION_ID, TestConstants.VALID_POST_ID);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void test_validateCandidatePostShouldThrowInvalidParameterExceptionForInvalidVoterId() {
+        new TestRunner()
+                .setInvalidVoterId(TestConstants.INVALID_VOTER_ID)
+                .callvalidateCandidatePost(TestConstants.VALID_POST_ID, TestConstants.INVALID_VOTER_ID);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void test_validateCandidatePostShouldThrowInvalidParameterExceptionForInvalidPostId() {
+        new TestRunner()
+                .setInvalidPostId(TestConstants.INVALID_POST_ID)
+                .callvalidateCandidatePost(TestConstants.INVALID_POST_ID, TestConstants.VALID_VOTER_ID);
+    }
+
+    @Test(expected = InvalidParameterException.class)
+    public void test_validateCandidatePostShouldThrowInvalidParameterExceptionForCanidateNotBelongingToPost() {
+        new TestRunner()
+                .setCandidateNotBelongingToPost(TestConstants.VALID_POST_ID, TestConstants.VALID_VOTER_ID)
+                .callvalidateCandidatePost(TestConstants.VALID_POST_ID, TestConstants.VALID_VOTER_ID);
+    }
+
+    @Test
+    public void test_validateCandidatePostSuccessfulExecution() {
+        new TestRunner()
+                .setCandidateBelongingToPost(TestConstants.VALID_POST_ID, TestConstants.VALID_VOTER_ID)
+                .callvalidateCandidatePost(TestConstants.VALID_POST_ID, TestConstants.VALID_VOTER_ID);
+
+    }
+
     private class TestRunner {
 
         TestRunner setInvalidVoterId(String voterId) {
             when(dbGetter.getVoter(voterId)).thenThrow(new EntityNotFoundException(""));
             when(dbGetter.getVoterMap(eq(voterId), anyString())).thenThrow(new EntityNotFoundException(""));
+            when(dbGetter.getPostContestant(anyString(), eq(voterId))).thenThrow(new EntityNotFoundException(""));
             return this;
         }
 
@@ -146,7 +236,7 @@ public class AuthenticationFacadeTest {
             voterMap.setElectionId(electionId);
             voterMap.setVoterAdmin(true);
             voterMap.setVoterEligible(voterEligibility);
-            when(dbGetter.getVoterMap(anyString(), eq(electionId))).thenThrow(new EntityNotFoundException(""));
+            doThrow(new EntityNotFoundException("")).when(dbGetter).getVoterMap(anyString(), eq(electionId));
             doReturn(voterMap).when(dbGetter).getVoterMap(voterId, electionId);
             return this;
         }
@@ -163,10 +253,41 @@ public class AuthenticationFacadeTest {
 
         TestRunner setInvalidElectionId(String electionId) {
             when(dbGetter.getVoterMap(anyString(), eq(electionId))).thenThrow(new EntityNotFoundException(""));
+            when(dbGetter.getElectionPost(eq(electionId), anyString())).thenThrow(new EntityNotFoundException(""));
             return this;
         }
 
-        TestRunner mockDBGetterToReturnNullValuesForValidCredentials(String voterId, String voterPassword) {
+        TestRunner setInvalidPostId(String postId) {
+            doThrow(new EntityNotFoundException("")).when(dbGetter).getPostContestant(eq(postId), anyString());
+            return this;
+        }
+
+        TestRunner setCandidateNotBelongingToPost(String postId, String candidateVoterId) {
+            doThrow(new EntityNotFoundException("")).when(dbGetter).getPostContestant(postId, candidateVoterId);
+            return this;
+        }
+
+        TestRunner setPostNotBelongingToElection(String electionId, String postId) {
+            doThrow(new EntityNotFoundException("")).when(dbGetter).getElectionPost(electionId, postId);
+            return this;
+        }
+
+        TestRunner setPostBelongingToElection(String electionId, String postId) {
+            doReturn(new Post()).when(dbGetter).getElectionPost(electionId, postId);
+            return this;
+        }
+
+        TestRunner setCandidateBelongingToPost(String postId, String candidateVoterId) {
+            doReturn(new Contestant()).when(dbGetter).getPostContestant(postId, candidateVoterId);
+            return this;
+        }
+
+        TestRunner setUnregisteredVoter(String voterId, String electionId) {
+            when(dbGetter.getVoterMap(voterId, electionId)).thenThrow(new EntityNotFoundException(""));
+            return this;
+        }
+
+        TestRunner mockDBGetVoterToReturnNullValuesForValidCredentials(String voterId, String voterPassword) {
             when(dbGetter.getVoter(voterId)).thenReturn(null);
             return this;
         }
@@ -188,6 +309,21 @@ public class AuthenticationFacadeTest {
 
         TestRunner callValidateElectionAdmin(String voterId, String electionId) {
             authenticationFacade.validateElectionAdmin(voterId, electionId);
+            return this;
+        }
+
+        TestRunner callValidateElectionViewer(String voterId, String electionId) {
+            authenticationFacade.validateElectionViewer(voterId, electionId);
+            return this;
+        }
+
+        TestRunner callValidateElectionPost(String electionId, String postId) {
+            authenticationFacade.validateElectionPost(electionId, postId);
+            return this;
+        }
+
+        TestRunner callvalidateCandidatePost(String postId, String candidateVoterId) {
+            authenticationFacade.validateCandidatePost(postId, candidateVoterId);
             return this;
         }
     }
