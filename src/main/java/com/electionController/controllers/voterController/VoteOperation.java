@@ -73,13 +73,13 @@ public final class VoteOperation extends ActionController<VoteQuery, Response> {
     * */
     private Response vote(final VoteQuery voteQuery) {
         String voted = dbGetter.getVoterMap(voteQuery.getVoterId(), voteQuery.getElectionId()).getHasVoted();
-        if(!checkIfVoterEligibleToVoteForGivenPostFromVotedString(voted, voteQuery.getPostId())) {
+        if(!checkIfVoterEligibleToVoteForGivenPost(voted, voteQuery.getPostId(), voteQuery.getElectionId())) {
             throw new RestrictedActionException(ResponseCodes.NOT_ELIGIBLE_TO_VOTE.getResponseCode(),
                     ResponseCodes.NOT_ELIGIBLE_TO_VOTE.getResponse(), null);
         }
         dbUpdater.incrementCandidateVote(voteQuery.getPostId(), voteQuery.getCandidateId());
         dbUpdater.markVoterVotedForPost(voteQuery.getVoterId(), voteQuery.getElectionId(),
-                getVotedString(voted, getPostIndexFromPostId(voteQuery.getPostId())));
+                getVotedString(voted, getPostIndex(voteQuery.getElectionId(), voteQuery.getPostId())));
 
         return Response.Builder()
                 .withResponse(null)
@@ -88,9 +88,9 @@ public final class VoteOperation extends ActionController<VoteQuery, Response> {
                 .build();
     }
 
-    private boolean checkIfVoterEligibleToVoteForGivenPostFromVotedString(final String votedPosts,
-                                                       final String postId) {
-        int postIndex = getPostIndexFromPostId(postId);
+    private boolean checkIfVoterEligibleToVoteForGivenPost(final String votedPosts, final String postId,
+                                                                          final String electionId) {
+        int postIndex = getPostIndex(electionId, postId);
         if (postIndex >= votedPosts.length()) {return false;}
         return votedPosts.charAt(postIndex) == '0';
     }
@@ -104,11 +104,7 @@ public final class VoteOperation extends ActionController<VoteQuery, Response> {
         return newVotedBuilder.toString();
     }
 
-    private int getPostIndexFromPostId(final String postId) {
-        String[] tokens = postId.split("-");
-        if (tokens.length < 2) {
-            throw new InternalServiceException("CANNOT_PARSE_POST_ID");
-        }
-        return Integer.parseInt(tokens[1]);
+    private int getPostIndex(final String electionId, final String postId) {
+        return dbGetter.getElectionPost(electionId, postId).getPostIndex();
     }
 }
