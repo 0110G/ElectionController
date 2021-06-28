@@ -37,7 +37,7 @@ public final class VoteOperation extends ActionController<VoteQuery, Response> {
     }
 
     @Override
-    public Response executeAction(VoteQuery voteQuery) {
+    protected Response executeAction(VoteQuery voteQuery) {
         return this.vote(voteQuery);
     }
 

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.electionController.controllers.electionController.ElectionController.ValidateNotNull;
+
 @RestController
 public final class DeleteElectionOperation extends ActionController<DeleteElectionQuery, Response> {
 
@@ -25,6 +27,12 @@ public final class DeleteElectionOperation extends ActionController<DeleteElecti
     }
 
     @Override
+    @DeleteMapping("/DeleteElection")
+    public Response execute(@RequestBody DeleteElectionQuery deleteElectionQuery) {
+        return super.execute(deleteElectionQuery);
+    }
+
+    @Override
     protected Response executeAction(final DeleteElectionQuery deleteElectionQuery) {
         dbDeletor.deleteElection(deleteElectionQuery.getElectionId());
         return Response.Builder()
@@ -36,15 +44,10 @@ public final class DeleteElectionOperation extends ActionController<DeleteElecti
 
     @Override
     public void validateActionAccess(DeleteElectionQuery deleteElectionQuery) {
+        ValidateNotNull(deleteElectionQuery);
         authenticationFacade.validateVoterCredentials(deleteElectionQuery.getVoterId(),
                 deleteElectionQuery.getVoterPassword());
         authenticationFacade.validateElectionAdmin(deleteElectionQuery.getVoterId(),
                 deleteElectionQuery.getElectionId());
-    }
-
-    @Override
-    @DeleteMapping("/DeleteElection")
-    public Response execute(@RequestBody DeleteElectionQuery deleteElectionQuery) {
-        return super.execute(deleteElectionQuery);
     }
 }

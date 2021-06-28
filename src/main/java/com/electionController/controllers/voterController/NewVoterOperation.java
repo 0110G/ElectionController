@@ -31,7 +31,7 @@ public final class NewVoterOperation extends ActionController<NewVoterQuery, Res
     }
 
     @Override
-    public Response executeAction(final NewVoterQuery newVoterQuery) {
+    protected Response executeAction(final NewVoterQuery newVoterQuery) {
         return this.createVoter(newVoterQuery);
     }
 

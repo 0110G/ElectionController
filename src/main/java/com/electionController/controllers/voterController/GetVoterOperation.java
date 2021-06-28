@@ -34,7 +34,7 @@ public final class GetVoterOperation extends ActionController<GetVoterQuery, Res
     }
 
     @Override
-    public Response executeAction(final GetVoterQuery getVoterQuery) {
+    protected Response executeAction(final GetVoterQuery getVoterQuery) {
         return this.getVoter(getVoterQuery);
     }
 
