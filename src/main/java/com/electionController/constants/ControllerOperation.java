@@ -40,6 +40,7 @@ public enum ControllerOperation {
 
     DB_DELETE_VOTER_FROM_ELECTION("DatabaseConnector", "DeleteVoterFromElection"),
     DB_DELETE_CANDIDATE_FROM_POST("DatabaseConnector", "DeleteCandidateFromPost"),
+    DB_DELETE_ELECTION("DatabaseConnector", "DeleteElection"),
 
     PING("TestConnector", "Ping");
 

@@ -2,6 +2,7 @@ package com.electionController.controllers;
 
 import com.electionController.constants.ControllerOperation;
 import com.electionController.constants.ResponseCodes;
+import com.electionController.dbConnector.Deleter.DBDeletor;
 import com.electionController.dbConnector.Getter.DBGetter;
 import com.electionController.dbConnector.Putter.DBPutter;
 import com.electionController.dbConnector.Updater.DBUpdater;
@@ -23,6 +24,9 @@ public abstract class ActionController<Query, Response> {
 
     @Autowired
     protected DBUpdater dbUpdater;
+
+    @Autowired
+    protected DBDeletor dbDeletor;
 
     public abstract ControllerOperation getControllerOperation();
 

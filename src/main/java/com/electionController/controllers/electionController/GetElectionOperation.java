@@ -53,7 +53,7 @@ public final class GetElectionOperation extends ActionController<GetElectionQuer
     }
 
     private Response getElection(final GetElectionQuery getElectionQuery) {
-        Election election = dbGetter.getElection(getElectionQuery.getElectionId());;
+        Election election = dbGetter.getElection(getElectionQuery.getElectionId());
         assert election != null;
         election.setEligibleVoters((List<Voter>) maskVoterPassword(election.getEligibleVoters()));
         for (Post post : election.getAvailablePost()) {
